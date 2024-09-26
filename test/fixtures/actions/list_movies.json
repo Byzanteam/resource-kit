@@ -1,0 +1,176 @@
+{
+  "schema": {
+    "source": "movies",
+    "columns": [
+      {
+        "name": "id",
+        "type": "uuid",
+        "auto_generate": true,
+        "primary_key": true
+      },
+      {
+        "name": "title",
+        "type": "text"
+      },
+      {
+        "name": "likes",
+        "type": "numeric"
+      },
+      {
+        "name": "released",
+        "type": "boolean"
+      },
+      {
+        "name": "release_date",
+        "type": "date"
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp"
+      },
+      {
+        "name": "tags",
+        "type": "text[]"
+      }
+    ]
+  },
+  "params_schema": {
+    "type": "object",
+    "properties": {
+      "pagination": {
+        "type": "object",
+        "properties": {
+          "offset": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10
+          }
+        },
+        "required": [
+          "offset",
+          "limit"
+        ]
+      }
+    },
+    "required": [
+      "pagination"
+    ]
+  },
+  "filter": {
+    "type": "data",
+    "value": "/filter"
+  },
+  "sorting": {
+    "type": "data",
+    "value": "/sorting"
+  },
+  "pagination": {
+    "offset": {
+      "type": "data",
+      "value": "/pagination/offset"
+    },
+    "limit": {
+      "type": "data",
+      "value": "/pagination/limit"
+    }
+  },
+  "fetching_schema": [
+    {
+      "type": "column",
+      "name": "id",
+      "column": "id"
+    },
+    {
+      "type": "column",
+      "name": "title",
+      "column": "title"
+    },
+    {
+      "type": "column",
+      "name": "likes",
+      "column": "likes"
+    },
+    {
+      "type": "column",
+      "name": "released",
+      "column": "released"
+    },
+    {
+      "type": "column",
+      "name": "release_date",
+      "column": "release_date"
+    },
+    {
+      "type": "column",
+      "name": "created_at",
+      "column": "created_at"
+    },
+    {
+      "type": "column",
+      "name": "tags",
+      "column": "tags"
+    }
+  ],
+  "returning_schema": [
+    {
+      "type": "column",
+      "name": "编号",
+      "value": {
+        "type": "schema",
+        "value": "0/id"
+      }
+    },
+    {
+      "type": "column",
+      "name": "标题",
+      "value": {
+        "type": "schema",
+        "value": "0/title"
+      }
+    },
+    {
+      "type": "column",
+      "name": "收藏",
+      "value": {
+        "type": "schema",
+        "value": "0/likes"
+      }
+    },
+    {
+      "type": "column",
+      "name": "已发布",
+      "value": {
+        "type": "schema",
+        "value": "0/released"
+      }
+    },
+    {
+      "type": "column",
+      "name": "发布日期",
+      "value": {
+        "type": "schema",
+        "value": "0/release_date"
+      }
+    },
+    {
+      "type": "column",
+      "name": "创建时间",
+      "value": {
+        "type": "schema",
+        "value": "0/created_at"
+      }
+    },
+    {
+      "type": "column",
+      "name": "标签",
+      "value": {
+        "type": "schema",
+        "value": "0/tags"
+      }
+    }
+  ]
+}
