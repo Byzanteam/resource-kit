@@ -1,0 +1,19 @@
+{
+  "source": "attachments",
+  "columns": [
+    {
+      "name": "id",
+      "type": "uuid",
+      "auto_generate": true,
+      "primary_key": true
+    },
+    {
+      "name": "comment_id",
+      "type": "uuid"
+    },
+    {
+      "name": "url",
+      "type": "text"
+    }
+  ]
+}

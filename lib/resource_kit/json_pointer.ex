@@ -10,7 +10,7 @@ defmodule ResourceKit.JSONPointer do
   alias ResourceKit.JSONPointer.Relative
   alias ResourceKit.JSONPointer.Utils
 
-  @typep result() :: {:ok, Types.json_value(), Context.location()} | {:error, Types.error()}
+  @type result() :: {:ok, Types.json_value(), Context.location()} | {:error, Types.error()}
 
   # PEG Grammar for JSON Pointer
   # [Abolute JSON Pointer](https://datatracker.ietf.org/doc/html/rfc6901)

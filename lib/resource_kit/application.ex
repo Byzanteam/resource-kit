@@ -5,8 +5,12 @@ defmodule ResourceKit.Application do
 
   @impl Application
   def start(_type, _args) do
-    children = []
+    Supervisor.start_link(children(), strategy: :one_for_one, name: __MODULE__)
+  end
 
-    Supervisor.start_link(children, strategy: :one_for_one, name: __MODULE__)
+  if Mix.env() === :test do
+    defp children, do: [ResourceKit.Repo]
+  else
+    defp children, do: []
   end
 end

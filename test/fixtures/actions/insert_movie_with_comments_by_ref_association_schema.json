@@ -1,0 +1,300 @@
+  {
+    "schema": {
+      "source": "movies",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "auto_generate": true,
+          "primary_key": true
+        },
+        {
+          "name": "title",
+          "type": "text"
+        },
+        {
+          "name": "poster",
+          "type": "has_one",
+          "foreign_key": "movie_id",
+          "association_schema": {
+            "type": "ref",
+            "$ref": "/schemas/posters.json"
+          }
+        },
+        {
+          "name": "comments",
+          "type": "has_many",
+          "foreign_key": "movie_id",
+          "association_schema": {
+            "type": "ref",
+            "$ref": "/schemas/comments.json"
+          }
+        }
+      ]
+    },
+    "params_schema": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "likes": {
+          "type": "integer"
+        },
+        "release_date": {
+          "type": "string"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "poster": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "url"
+          ]
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "content": {
+                "type": "string"
+              },
+              "attachments": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "url": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "url"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "content"
+            ]
+          }
+        }
+      },
+      "required": [
+        "title",
+        "likes",
+        "release_date",
+        "created_at",
+        "tags"
+      ]
+    },
+    "changeset": {
+      "changes": [
+        {
+          "type": "column",
+          "name": "title",
+          "value": {
+            "type": "data",
+            "value": "/title"
+          }
+        },
+        {
+          "type": "association",
+          "name": "poster",
+          "value": {
+            "type": "data",
+            "value": "/poster"
+          },
+          "on_replace": "update",
+          "changeset": {
+            "changes": [
+              {
+                "type": "column",
+                "name": "url",
+                "value": {
+                  "type": "data",
+                  "value": "0/url"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "association",
+          "name": "comments",
+          "value": {
+            "type": "data",
+            "value": "/comments"
+          },
+          "on_replace": "delete",
+          "changeset": {
+            "changes": [
+              {
+                "type": "column",
+                "name": "content",
+                "value": {
+                  "type": "data",
+                  "value": "0/content"
+                }
+              },
+              {
+                "type": "association",
+                "name": "attachments",
+                "value": {
+                  "type": "data",
+                  "value": "0/attachments"
+                },
+                "on_replace": "update",
+                "changeset": {
+                  "changes": [
+                    {
+                      "type": "column",
+                      "name": "url",
+                      "value": {
+                        "type": "data",
+                        "value": "0/url"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "returning_schema": [
+      {
+        "type": "column",
+        "name": "context",
+        "value": {
+          "type": "context",
+          "value": "/ip"
+        }
+      },
+      {
+        "type": "column",
+        "name": "data",
+        "value": {
+          "type": "data",
+          "value": "/foo"
+        }
+      },
+      {
+        "type": "column",
+        "name": "title",
+        "value": {
+          "type": "schema",
+          "value": "/title"
+        }
+      },
+      {
+        "type": "column",
+        "name": "likes",
+        "value": {
+          "type": "schema",
+          "value": "/likes"
+        }
+      },
+      {
+        "type": "column",
+        "name": "released",
+        "value": {
+          "type": "schema",
+          "value": "/released"
+        }
+      },
+      {
+        "type": "column",
+        "name": "release_date",
+        "value": {
+          "type": "schema",
+          "value": "/release_date"
+        }
+      },
+      {
+        "type": "column",
+        "name": "created_at",
+        "value": {
+          "type": "schema",
+          "value": "/created_at"
+        }
+      },
+      {
+        "type": "column",
+        "name": "tags",
+        "value": {
+          "type": "schema",
+          "value": "/tags"
+        }
+      },
+      {
+        "type": "association",
+        "name": "poster",
+        "value": {
+          "type": "schema",
+          "value": "/poster"
+        },
+        "schema": [
+          {
+            "type": "column",
+            "name": "url",
+            "value": {
+              "type": "schema",
+              "value": "0/url"
+            }
+          }
+        ]
+      },
+      {
+        "type": "association",
+        "name": "comments",
+        "value": {
+          "type": "schema",
+          "value": "/comments"
+        },
+        "schema": [
+          {
+            "type": "column",
+            "name": "content",
+            "value": {
+              "type": "schema",
+              "value": "0/content"
+            }
+          },
+          {
+            "type": "association",
+            "name": "attachments",
+            "value": {
+              "type": "schema",
+              "value": "0/attachments"
+            },
+            "schema": [
+              {
+                "type": "column",
+                "name": "url",
+                "value": {
+                  "type": "schema",
+                  "value": "0/url"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }

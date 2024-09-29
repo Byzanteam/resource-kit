@@ -1,0 +1,139 @@
+{
+  "schema": {
+    "source": "movies",
+    "columns": [
+      {
+        "name": "id",
+        "type": "uuid",
+        "auto_generate": true,
+        "primary_key": true
+      },
+      {
+        "name": "title",
+        "type": "text"
+      },
+      {
+        "name": "likes",
+        "type": "numeric"
+      },
+      {
+        "name": "released",
+        "type": "boolean"
+      },
+      {
+        "name": "release_date",
+        "type": "date"
+      },
+      {
+        "name": "created_at",
+        "type": "timestamp"
+      },
+      {
+        "name": "tags",
+        "type": "text[]"
+      }
+    ]
+  },
+  "changeset": {
+    "changes": [
+      {
+        "type": "column",
+        "name": "title",
+        "value": {
+          "type": "data",
+          "value": "/title"
+        }
+      },
+      {
+        "type": "column",
+        "name": "likes",
+        "value": {
+          "type": "data",
+          "value": "/likes"
+        }
+      },
+      {
+        "type": "column",
+        "name": "released",
+        "value": {
+          "type": "value",
+          "value": true
+        }
+      },
+      {
+        "type": "column",
+        "name": "release_date",
+        "value": {
+          "type": "data",
+          "value": "/release_date"
+        }
+      },
+      {
+        "type": "column",
+        "name": "created_at",
+        "value": {
+          "type": "data",
+          "value": "/created_at"
+        }
+      },
+      {
+        "type": "column",
+        "name": "tags",
+        "value": {
+          "type": "data",
+          "value": "/tags"
+        }
+      }
+    ]
+  },
+  "returning_schema": [
+    {
+      "type": "column",
+      "name": "title",
+      "value": {
+        "type": "schema",
+        "value": "/title"
+      }
+    },
+    {
+      "type": "column",
+      "name": "likes",
+      "value": {
+        "type": "schema",
+        "value": "/likes"
+      }
+    },
+    {
+      "type": "column",
+      "name": "released",
+      "value": {
+        "type": "schema",
+        "value": "/released"
+      }
+    },
+    {
+      "type": "column",
+      "name": "release_date",
+      "value": {
+        "type": "schema",
+        "value": "/release_date"
+      }
+    },
+    {
+      "type": "column",
+      "name": "created_at",
+      "value": {
+        "type": "schema",
+        "value": "/created_at"
+      }
+    },
+    {
+      "type": "column",
+      "name": "tags",
+      "value": {
+        "type": "schema",
+        "value": "/tags"
+      }
+    }
+  ]
+}

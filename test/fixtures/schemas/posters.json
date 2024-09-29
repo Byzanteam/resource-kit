@@ -1,0 +1,19 @@
+{
+  "source": "posters",
+  "columns": [
+    {
+      "name": "id",
+      "type": "uuid",
+      "auto_generate": true,
+      "primary_key": true
+    },
+    {
+      "name": "movie_id",
+      "type": "uuid"
+    },
+    {
+      "name": "url",
+      "type": "text"
+    }
+  ]
+}
