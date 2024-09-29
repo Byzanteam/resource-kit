@@ -31,7 +31,9 @@ defmodule ResourceKit.MixProject do
     [
       {:credo, "~> 1.7", only: [:dev], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
-      {:jet_credo, github: "Byzanteam/jet_credo", only: [:dev], runtime: false}
+      {:jet_credo, github: "Byzanteam/jet_credo", only: [:dev], runtime: false},
+      {:pegasus, "~> 0.2.5"},
+      {:typed_struct, "~> 0.3.0"}
     ]
   end
 end
