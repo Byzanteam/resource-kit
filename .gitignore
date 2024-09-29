@@ -1,0 +1,10 @@
+/_build/
+/cover/
+/deps/
+/doc/
+/tmp/
+*.ez
+erl_crash.dump
+resource_kit-*.tar
+/priv/plts/*.plt
+/priv/plts/*.plt.hash
