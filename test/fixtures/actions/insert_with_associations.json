@@ -1,0 +1,351 @@
+{
+  "schema": {
+    "source": "movies",
+    "columns": [
+      {
+        "name": "id",
+        "type": "uuid",
+        "auto_generate": true,
+        "primary_key": true
+      },
+      {
+        "name": "ip",
+        "type": "text"
+      },
+      {
+        "name": "title",
+        "type": "text"
+      },
+      {
+        "name": "released",
+        "type": "boolean"
+      },
+      {
+        "name": "poster",
+        "type": "has_one",
+        "foreign_key": "movie_id",
+        "association_schema": {
+          "type": "schema",
+          "source": "posters",
+          "columns": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "auto_generate": true,
+              "primary_key": true
+            },
+            {
+              "name": "movie_id",
+              "type": "uuid"
+            },
+            {
+              "name": "url",
+              "type": "text"
+            },
+            {
+              "name": "author",
+              "type": "has_one",
+              "foreign_key": "poster_id",
+              "association_schema": {
+                "type": "schema",
+                "source": "poster_authors",
+                "columns": [
+                  {
+                    "name": "email",
+                    "type": "text"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "comments",
+        "type": "has_many",
+        "foreign_key": "movie_id",
+        "association_schema": {
+          "type": "schema",
+          "source": "comments",
+          "columns": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "auto_generate": true,
+              "primary_key": true
+            },
+            {
+              "name": "movie_id",
+              "type": "uuid"
+            },
+            {
+              "name": "content",
+              "type": "text"
+            },
+            {
+              "name": "author",
+              "type": "has_one",
+              "foreign_key": "comment_id",
+              "association_schema": {
+                "type": "schema",
+                "source": "comment_authors",
+                "columns": [
+                  {
+                    "name": "id",
+                    "type": "uuid",
+                    "auto_generate": true,
+                    "primary_key": true
+                  },
+                  {
+                    "name": "comment_id",
+                    "type": "uuid"
+                  },
+                  {
+                    "name": "name",
+                    "type": "text"
+                  },
+                  {
+                    "name": "age",
+                    "type": "numeric"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "params_schema": {},
+  "changeset": {
+    "changes": [
+      {
+        "type": "column",
+        "name": "ip",
+        "value": {
+          "type": "context",
+          "value": "/ip"
+        }
+      },
+      {
+        "type": "column",
+        "name": "title",
+        "value": {
+          "type": "data",
+          "value": "/caption"
+        }
+      },
+      {
+        "type": "column",
+        "name": "released",
+        "value": {
+          "type": "value",
+          "value": true
+        }
+      },
+      {
+        "type": "association",
+        "name": "poster",
+        "value": {
+          "type": "value",
+          "value": {
+            "url": "https://movies.local/poster.png",
+            "author": {
+              "email": "author@byzan.team"
+            }
+          }
+        },
+        "on_replace": "update",
+        "changeset": {
+          "changes": [
+            {
+              "type": "column",
+              "name": "url",
+              "value": {
+                "type": "data",
+                "value": "0/url"
+              }
+            },
+            {
+              "type": "association",
+              "name": "author",
+              "value": {
+                "type": "data",
+                "value": "0/author"
+              },
+              "on_replace": "update",
+              "changeset": {
+                "changes": [
+                  {
+                    "type": "column",
+                    "name": "email",
+                    "value": {
+                      "type": "data",
+                      "value": "0/email"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      {
+        "type": "association",
+        "name": "comments",
+        "value": {
+          "type": "data",
+          "value": "/reviews"
+        },
+        "on_replace": "delete",
+        "changeset": {
+          "changes": [
+            {
+              "type": "column",
+              "name": "content",
+              "value": {
+                "type": "data",
+                "value": "0/content"
+              }
+            },
+            {
+              "type": "association",
+              "name": "author",
+              "value": {
+                "type": "data",
+                "value": "0/author"
+              },
+              "on_replace": "update",
+              "changeset": {
+                "changes": [
+                  {
+                    "type": "column",
+                    "name": "name",
+                    "value": {
+                      "type": "data",
+                      "value": "0/full_name"
+                    }
+                  },
+                  {
+                    "type": "column",
+                    "name": "age",
+                    "value": {
+                      "type": "data",
+                      "value": "/default_age"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "returning_schema": [
+    {
+      "type": "column",
+      "name": "ip",
+      "value": {
+        "type": "schema",
+        "value": "/ip"
+      }
+    },
+    {
+      "type": "column",
+      "name": "title",
+      "value": {
+        "type": "schema",
+        "value": "/title"
+      }
+    },
+    {
+      "type": "column",
+      "name": "released",
+      "value": {
+        "type": "schema",
+        "value": "/released"
+      }
+    },
+    {
+      "type": "association",
+      "name": "poster",
+      "value": {
+        "type": "schema",
+        "value": "/poster"
+      },
+      "schema": [
+        {
+          "type": "column",
+          "name": "url",
+          "value": {
+            "type": "schema",
+            "value": "0/url"
+          }
+        },
+        {
+          "type": "association",
+          "name": "author",
+          "value": {
+            "type": "schema",
+            "value": "0/author"
+          },
+          "schema": [
+            {
+              "type": "column",
+              "name": "email",
+              "value": {
+                "type": "schema",
+                "value": "0/email"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "association",
+      "name": "comments",
+      "value": {
+        "type": "schema",
+        "value": "/comments"
+      },
+      "schema": [
+        {
+          "type": "column",
+          "name": "content",
+          "value": {
+            "type": "schema",
+            "value": "0/content"
+          }
+        },
+        {
+          "type": "association",
+          "name": "author",
+          "value": {
+            "type": "schema",
+            "value": "0/author"
+          },
+          "schema": [
+            {
+              "type": "column",
+              "name": "name",
+              "value": {
+                "type": "schema",
+                "value": "0/name"
+              }
+            },
+            {
+              "type": "column",
+              "name": "age",
+              "value": {
+                "type": "schema",
+                "value": "0/age"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

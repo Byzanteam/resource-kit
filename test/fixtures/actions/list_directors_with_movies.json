@@ -1,0 +1,152 @@
+{
+  "schema": {
+    "source": "directors",
+    "columns": [
+      {
+        "name": "id",
+        "type": "uuid",
+        "auto_generate": true,
+        "primary_key": true
+      },
+      {
+        "name": "name",
+        "type": "text"
+      },
+      {
+        "type": "has_many",
+        "name": "movies",
+        "foreign_key": "director_id",
+        "association_schema": {
+          "type": "schema",
+          "source": "movies",
+          "columns": [
+            {
+              "name": "id",
+              "type": "uuid",
+              "auto_generate": true,
+              "primary_key": true
+            },
+            {
+              "name": "title",
+              "type": "text"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "params_schema": {
+    "type": "object",
+    "properties": {
+      "pagination": {
+        "type": "object",
+        "properties": {
+          "offset": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10
+          }
+        },
+        "required": [
+          "offset",
+          "limit"
+        ]
+      }
+    },
+    "required": [
+      "pagination"
+    ]
+  },
+  "filter": {
+    "operator": "and"
+  },
+  "pagination": {
+    "offset": {
+      "type": "data",
+      "value": "/pagination/offset"
+    },
+    "limit": {
+      "type": "data",
+      "value": "/pagination/limit"
+    }
+  },
+  "fetching_schema": [
+    {
+      "type": "column",
+      "name": "id",
+      "column": "id"
+    },
+    {
+      "type": "column",
+      "name": "name",
+      "column": "name"
+    },
+    {
+      "type": "association",
+      "name": "movies",
+      "through": [
+        "movies"
+      ],
+      "schema": [
+        {
+          "type": "column",
+          "name": "id",
+          "column": "id"
+        },
+        {
+          "type": "column",
+          "name": "title",
+          "column": "title"
+        }
+      ]
+    }
+  ],
+  "returning_schema": [
+    {
+      "type": "column",
+      "name": "编号",
+      "value": {
+        "type": "schema",
+        "value": "0/id"
+      }
+    },
+    {
+      "type": "column",
+      "name": "姓名",
+      "value": {
+        "type": "schema",
+        "value": "0/name"
+      }
+    },
+    {
+      "type": "association",
+      "name": "电影",
+      "value": {
+        "type": "schema",
+        "value": "0/movies"
+      },
+      "schema": [
+        {
+          "type": "column",
+          "name": "编号",
+          "value": {
+            "type": "schema",
+            "value": "0/id"
+          }
+        },
+        {
+          "type": "column",
+          "name": "标题",
+          "value": {
+            "type": "schema",
+            "value": "0/title"
+          }
+        }
+      ]
+    }
+  ]
+}
