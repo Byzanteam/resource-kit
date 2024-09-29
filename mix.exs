@@ -35,9 +35,12 @@ defmodule ResourceKit.MixProject do
       {:ecto_sql, "~> 3.12"},
       {:jet_credo, github: "Byzanteam/jet_credo", only: [:dev], runtime: false},
       {:jet_ext, "~> 0.2.5"},
+      {:mimic, "~> 1.10", only: [:test], runtime: false},
       {:pegasus, "~> 0.2.5"},
+      {:pluggable, "~> 1.1"},
       {:polymorphic_embed, "~> 5.0"},
       {:postgrex, ">= 0.0.0"},
+      {:snapshy, "~> 0.4.0", only: [:test], runtime: false},
       {:typed_struct, "~> 0.3.0"}
     ]
   end

@@ -1,0 +1,28 @@
+{
+  "source": "comments",
+  "columns": [
+    {
+      "name": "id",
+      "type": "uuid",
+      "auto_generate": true,
+      "primary_key": true
+    },
+    {
+      "name": "movie_id",
+      "type": "uuid"
+    },
+    {
+      "name": "content",
+      "type": "text"
+    },
+    {
+      "name": "attachments",
+      "type": "has_many",
+      "foreign_key": "comment_id",
+      "association_schema": {
+        "type": "ref",
+        "$ref": "/schemas/attachments.json"
+      }
+    }
+  ]
+}

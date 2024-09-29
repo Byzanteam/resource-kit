@@ -1,0 +1,138 @@
+{
+  "schema": {
+    "$ref": "/schemas/movies.json"
+  },
+  "params_schema": {
+    "type": "object",
+    "properties": {
+      "title": {
+        "type": "string"
+      },
+      "likes": {
+        "type": "integer"
+      },
+      "release_date": {
+        "type": "string"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time"
+      },
+      "tags": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "required": [
+      "title",
+      "likes",
+      "release_date",
+      "created_at",
+      "tags"
+    ]
+  },
+  "changeset": {
+    "changes": [
+      {
+        "type": "column",
+        "name": "title",
+        "value": {
+          "type": "data",
+          "value": "/title"
+        }
+      },
+      {
+        "type": "column",
+        "name": "likes",
+        "value": {
+          "type": "data",
+          "value": "/likes"
+        }
+      },
+      {
+        "type": "column",
+        "name": "released",
+        "value": {
+          "type": "value",
+          "value": true
+        }
+      },
+      {
+        "type": "column",
+        "name": "release_date",
+        "value": {
+          "type": "data",
+          "value": "/release_date"
+        }
+      },
+      {
+        "type": "column",
+        "name": "created_at",
+        "value": {
+          "type": "data",
+          "value": "/created_at"
+        }
+      },
+      {
+        "type": "column",
+        "name": "tags",
+        "value": {
+          "type": "data",
+          "value": "/tags"
+        }
+      }
+    ]
+  },
+  "returning_schema": [
+    {
+      "type": "column",
+      "name": "title",
+      "value": {
+        "type": "schema",
+        "value": "/title"
+      }
+    },
+    {
+      "type": "column",
+      "name": "likes",
+      "value": {
+        "type": "schema",
+        "value": "/likes"
+      }
+    },
+    {
+      "type": "column",
+      "name": "released",
+      "value": {
+        "type": "schema",
+        "value": "/released"
+      }
+    },
+    {
+      "type": "column",
+      "name": "release_date",
+      "value": {
+        "type": "schema",
+        "value": "/release_date"
+      }
+    },
+    {
+      "type": "column",
+      "name": "created_at",
+      "value": {
+        "type": "schema",
+        "value": "/created_at"
+      }
+    },
+    {
+      "type": "column",
+      "name": "tags",
+      "value": {
+        "type": "schema",
+        "value": "/tags"
+      }
+    }
+  ]
+}

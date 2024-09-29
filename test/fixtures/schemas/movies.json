@@ -1,0 +1,35 @@
+{
+  "source": "movies",
+  "columns": [
+    {
+      "name": "id",
+      "type": "uuid",
+      "auto_generate": true,
+      "primary_key": true
+    },
+    {
+      "name": "title",
+      "type": "text"
+    },
+    {
+      "name": "likes",
+      "type": "numeric"
+    },
+    {
+      "name": "released",
+      "type": "boolean"
+    },
+    {
+      "name": "release_date",
+      "type": "date"
+    },
+    {
+      "name": "created_at",
+      "type": "timestamp"
+    },
+    {
+      "name": "tags",
+      "type": "text[]"
+    }
+  ]
+}
