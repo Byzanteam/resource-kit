@@ -1,4 +1,4 @@
-defmodule ResourceKitWeb.Service do
+defmodule ResourceKitPlug.Service do
   @moduledoc false
 
   @dialyzer :no_behaviours
@@ -9,6 +9,6 @@ defmodule ResourceKitWeb.Service do
     schema: "priv/openrpc/services/actions.json",
     version: "2.0"
 
-  rpc "insert", ResourceKitWeb.Controller, :insert
-  rpc "list", ResourceKitWeb.Controller, :list
+  rpc "insert", ResourceKitPlug.Controller, :insert
+  rpc "list", ResourceKitPlug.Controller, :list
 end

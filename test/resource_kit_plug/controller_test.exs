@@ -1,4 +1,4 @@
-defmodule ResourceKit.Controller.ActionsTest do
+defmodule ResourceKitPlug.ControllerTest do
   use ResourceKit.Case.Database, async: true
   use ResourceKit.Case.Pipeline, async: true
 
@@ -79,7 +79,7 @@ defmodule ResourceKit.Controller.ActionsTest do
 
   defp execute(type, request) do
     alias PhxJsonRpc.Router.Context
-    alias ResourceKitWeb.Controller
+    alias ResourceKitPlug.Controller
 
     apply(Controller, type, [request, Context.build(Controller)])
   end
