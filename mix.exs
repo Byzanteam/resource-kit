@@ -34,7 +34,7 @@ defmodule ResourceKit.MixProject do
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
       {:ecto_sql, "~> 3.12"},
       {:jet_credo, github: "Byzanteam/jet_credo", only: [:dev], runtime: false},
-      {:jet_ext, "~> 0.2.5"},
+      {:jet_ext, "~> 0.3.0"},
       {:mimic, "~> 1.10", only: [:test], runtime: false},
       {:pegasus, "~> 0.2.5"},
       {:pluggable, "~> 1.1"},
