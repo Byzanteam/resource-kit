@@ -30,13 +30,16 @@ defmodule ResourceKit.MixProject do
 
   defp deps do
     [
+      {:bandit, "~> 1.5"},
       {:credo, "~> 1.7", only: [:dev], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
       {:ecto_sql, "~> 3.12"},
+      {:jason, "~> 1.4"},
       {:jet_credo, github: "Byzanteam/jet_credo", only: [:dev], runtime: false},
       {:jet_ext, "~> 0.3.0"},
       {:mimic, "~> 1.10", only: [:test], runtime: false},
       {:pegasus, "~> 0.2.5"},
+      {:phx_json_rpc, "~> 0.6.0"},
       {:pluggable, "~> 1.1"},
       {:polymorphic_embed, "~> 5.0"},
       {:postgrex, ">= 0.0.0"},
