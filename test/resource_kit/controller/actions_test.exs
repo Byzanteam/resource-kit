@@ -79,8 +79,8 @@ defmodule ResourceKit.Controller.ActionsTest do
 
   defp execute(type, request) do
     alias PhxJsonRpc.Router.Context
-    alias ResourceKit.Controller.Actions
+    alias ResourceKitWeb.Controller
 
-    apply(Actions, type, [request, Context.build(Actions)])
+    apply(Controller, type, [request, Context.build(Controller)])
   end
 end

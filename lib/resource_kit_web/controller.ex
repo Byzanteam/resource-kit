@@ -1,4 +1,4 @@
-defmodule ResourceKit.Controller.Actions do
+defmodule ResourceKitWeb.Controller do
   @moduledoc false
 
   alias ResourceKit.Schema.Ref

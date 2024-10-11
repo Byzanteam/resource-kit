@@ -1,4 +1,4 @@
-defmodule ResourceKit.Router do
+defmodule ResourceKitWeb.Router do
   @moduledoc false
 
   use Plug.Router
@@ -8,7 +8,7 @@ defmodule ResourceKit.Router do
   plug :match
   plug :dispatch
 
-  post "/rpc/actions", do: handle(conn, ResourceKit.Service.Actions)
+  post "/rpc/actions", do: handle(conn, ResourceKitWeb.Service)
 
   defp handle(%Plug.Conn{} = conn, service) do
     import PhxJsonRpcWeb.Views.Helpers

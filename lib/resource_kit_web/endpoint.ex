@@ -1,4 +1,4 @@
-defmodule ResourceKit.Endpoint do
+defmodule ResourceKitWeb.Endpoint do
   @moduledoc false
 
   use Supervisor
@@ -23,6 +23,6 @@ defmodule ResourceKit.Endpoint do
     :resource_kit
     |> Application.get_env(__MODULE__, [])
     |> Keyword.merge(args)
-    |> Keyword.put(:plug, ResourceKit.Router)
+    |> Keyword.put(:plug, ResourceKitWeb.Router)
   end
 end

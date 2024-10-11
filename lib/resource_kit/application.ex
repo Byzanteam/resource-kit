@@ -11,6 +11,6 @@ defmodule ResourceKit.Application do
   if Mix.env() === :test do
     defp children, do: [ResourceKit.Repo]
   else
-    defp children, do: [ResourceKit.Endpoint, ResourceKit.Repo]
+    defp children, do: [ResourceKitWeb.Endpoint]
   end
 end
