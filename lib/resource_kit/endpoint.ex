@@ -11,8 +11,12 @@ defmodule ResourceKit.Endpoint do
   @impl Supervisor
   def init(args) do
     {server, options} = Keyword.pop(args, :server, false)
-    children = if server, do: [{Bandit, options}], else: []
-    Supervisor.init(children, strategy: :one_for_one)
+
+    if server do
+      Supervisor.init([{Bandit, options}], strategy: :one_for_one)
+    else
+      :ignore
+    end
   end
 
   defp configuration(args) do
