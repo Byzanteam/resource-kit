@@ -1,3 +1,3 @@
 import Config
 
-config :resource_kit, ResourceKitWeb.Endpoint, server: true
+config :resource_kit, ResourceKitCLI.Endpoint, server: true
