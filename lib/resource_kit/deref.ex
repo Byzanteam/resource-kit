@@ -11,6 +11,7 @@ defmodule ResourceKit.Deref do
 
   alias ResourceKit.Types
 
+  alias ResourceKit.Deref.Context
   alias ResourceKit.Schema.Ref
 
   @callback resolve(ref :: Ref.t(), ctx :: Context.t()) ::
@@ -22,6 +23,28 @@ defmodule ResourceKit.Deref do
   defmacro __using__(_args) do
     quote location: :keep do
       @behaviour unquote(__MODULE__)
+
+      import unquote(__MODULE__)
+
+      @impl unquote(__MODULE__)
+      def resolve(ref, ctx) do
+        unquote(__MODULE__).absolute(ref, ctx)
+      end
+
+      defoverridable resolve: 2
     end
+  end
+
+  defguard is_absolute(term) when is_struct(term, Ref) and is_binary(term.uri.scheme)
+
+  @spec absolute(ref :: Ref.t(), ctx :: Context.t()) :: {:ok, Ref.t()} | {:error, Types.error()}
+  def absolute(ref, ctx)
+
+  def absolute(%Ref{} = ref, %Context{}) when is_absolute(ref) do
+    {:ok, ref}
+  end
+
+  def absolute(%Ref{uri: uri}, %Context{id: %Ref{uri: id}}) do
+    {:ok, %Ref{uri: %{id | path: Path.expand(uri.path, id.path)}}}
   end
 end
