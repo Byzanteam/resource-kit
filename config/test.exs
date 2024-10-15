@@ -1,8 +1,7 @@
 import Config
 
 config :resource_kit, ResourceKit.Deref,
-  adapter: ResourceKit.Deref.Local,
-  directory: "test/fixtures"
+  adapter: {ResourceKit.Deref.Local, directory: "test/fixtures"}
 
 config :resource_kit, ResourceKit.Repo,
   hostname: "localhost",

@@ -2,11 +2,9 @@ defmodule ResourceKit.Deref do
   @moduledoc """
   A behavior definition that developers can use to implement their own dereferencing logic.
 
-  ## Configuration
+  ## Options
 
-    * `adapter` - A module that implemented the deref behaviour.
-
-  Additional configuration is passed to the adapter as-is via the opts property of the context.
+    * `adapter` - A module that implemented the deref behaviour. Or `{adapter, opts}` if the adapter has options.
   """
 
   alias ResourceKit.Types
@@ -14,8 +12,9 @@ defmodule ResourceKit.Deref do
   alias ResourceKit.Deref.Context
   alias ResourceKit.Schema.Ref
 
-  @adapter Application.compile_env(:resource_kit, [__MODULE__, :adapter], ResourceKit.Deref.Local)
-  @opts :resource_kit |> Application.compile_env(__MODULE__, []) |> Keyword.drop([:adapter])
+  @conf Application.compile_env(:resource_kit, [__MODULE__, :adapter], ResourceKit.Deref.Local)
+  @adapter if is_tuple(@conf), do: elem(@conf, 0), else: @conf
+  @opts if is_tuple(@conf), do: elem(@conf, 1), else: []
 
   @callback resolve(ref :: Ref.t(), ctx :: Context.t()) ::
               {:ok, Ref.t()} | {:error, Types.error()}
