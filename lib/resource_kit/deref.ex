@@ -46,8 +46,8 @@ defmodule ResourceKit.Deref do
     {:ok, ref}
   end
 
-  def absolute(%Ref{uri: uri}, %Context{id: %Ref{uri: id}}) do
-    {:ok, %Ref{uri: %{id | path: Path.expand(uri.path, id.path)}}}
+  def absolute(%Ref{uri: uri}, %Context{current: %Ref{uri: current}}) do
+    {:ok, %Ref{uri: %{current | path: Path.expand(uri.path, current.path)}}}
   end
 
   @spec resolve(ref :: Ref.t(), ctx :: Context.t()) :: {:ok, Ref.t()} | {:error, Types.error()}

@@ -82,7 +82,7 @@ defmodule ResourceKit.Pipeline.Compile.PreloadReference do
 
   defp resolve(ref, context, references) do
     with :error <- Map.fetch(references, ref) do
-      ResourceKit.Utils.resolve_association_schema(ref, %DerefContext{id: context.current})
+      ResourceKit.Utils.resolve_association_schema(ref, %DerefContext{current: context.current})
     end
   end
 end

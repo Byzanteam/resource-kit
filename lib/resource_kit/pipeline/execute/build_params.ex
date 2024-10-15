@@ -143,7 +143,9 @@ defmodule ResourceKit.Pipeline.Execute.BuildParams do
 
   defp fetch_association_definition(%HasColumn{association_schema: schema}, context, name) do
     with {:ok, schema} <-
-           ResourceKit.Utils.resolve_association_schema(schema, %DerefContext{id: context.current}) do
+           ResourceKit.Utils.resolve_association_schema(schema, %DerefContext{
+             current: context.current
+           }) do
       case Enum.find(schema.columns, &(&1.name === name)) do
         %HasColumn{} = definition -> {:ok, definition}
         %LiteralColumn{} -> {:error, {"is not an association definition", validation: :custom}}

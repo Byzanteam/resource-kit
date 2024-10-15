@@ -42,7 +42,7 @@ defmodule ResourceKitPlug.Controller do
   defp fetch_action(%Request{uri: uri}) do
     alias ResourceKit.Deref.Context
 
-    case ResourceKit.Deref.fetch(%Ref{uri: uri}, %Context{id: %Ref{uri: uri}}) do
+    case ResourceKit.Deref.fetch(%Ref{uri: uri}, %Context{current: %Ref{uri: uri}}) do
       {:ok, action} ->
         {:ok, action}
 

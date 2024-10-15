@@ -37,7 +37,7 @@ defmodule ResourceKit.Pipeline.Compile.Deref do
 
   defp deref_schema(%{"schema" => ref} = action, ctx) when is_ref(ref) do
     with {:ok, ref} <- cast_ref(ref),
-         {:ok, schema} <- ResourceKit.Deref.fetch(ref, %DerefContext{id: ctx.current}) do
+         {:ok, schema} <- ResourceKit.Deref.fetch(ref, %DerefContext{current: ctx.current}) do
       {:ok, Map.put(action, "schema", schema)}
     end
   end
@@ -46,7 +46,7 @@ defmodule ResourceKit.Pipeline.Compile.Deref do
 
   defp deref_returning_schema(%{"returning_schema" => ref} = action, ctx) when is_ref(ref) do
     with {:ok, ref} <- cast_ref(ref),
-         {:ok, returning} <- ResourceKit.Deref.fetch(ref, %DerefContext{id: ctx.current}) do
+         {:ok, returning} <- ResourceKit.Deref.fetch(ref, %DerefContext{current: ctx.current}) do
       {:ok, Map.put(action, "returning_schema", returning)}
     end
   end

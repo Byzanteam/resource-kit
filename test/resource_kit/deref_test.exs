@@ -5,7 +5,7 @@ defmodule ResourceKit.DerefTest do
   alias ResourceKit.Schema.Ref
 
   @id "volume://action:deployment@/actions/movies/insert.json"
-  @ctx %Context{id: %Ref{uri: URI.new!(@id)}}
+  @ctx %Context{current: %Ref{uri: URI.new!(@id)}}
 
   test "absolute uri" do
     uri = "volume://action:deployment@/actions/movies/insert.json"
