@@ -14,7 +14,7 @@ defmodule ResourceKit.Deref do
   alias ResourceKit.Deref.Context
   alias ResourceKit.Schema.Ref
 
-  @adapter Application.compile_env(:resource_kit, [__MODULE__, :adapter], ResourceKit.Deref.File)
+  @adapter Application.compile_env(:resource_kit, [__MODULE__, :adapter], ResourceKit.Deref.Local)
   @opts :resource_kit |> Application.compile_env(__MODULE__, []) |> Keyword.drop([:adapter])
 
   @callback resolve(ref :: Ref.t(), ctx :: Context.t()) ::

@@ -1,4 +1,4 @@
-defmodule ResourceKit.Deref.File do
+defmodule ResourceKit.Deref.Local do
   @moduledoc """
   A deref implementation that loads a JSON document from a local directory.
 
