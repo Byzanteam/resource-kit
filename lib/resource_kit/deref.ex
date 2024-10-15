@@ -14,6 +14,9 @@ defmodule ResourceKit.Deref do
   alias ResourceKit.Deref.Context
   alias ResourceKit.Schema.Ref
 
+  @adapter Application.compile_env(:resource_kit, [__MODULE__, :adapter], ResourceKit.Deref.File)
+  @opts :resource_kit |> Application.compile_env(__MODULE__, []) |> Keyword.drop([:adapter])
+
   @callback resolve(ref :: Ref.t(), ctx :: Context.t()) ::
               {:ok, Ref.t()} | {:error, Types.error()}
 
@@ -46,5 +49,20 @@ defmodule ResourceKit.Deref do
 
   def absolute(%Ref{uri: uri}, %Context{id: %Ref{uri: id}}) do
     {:ok, %Ref{uri: %{id | path: Path.expand(uri.path, id.path)}}}
+  end
+
+  @spec resolve(ref :: Ref.t(), ctx :: Context.t()) :: {:ok, Ref.t()} | {:error, Types.error()}
+  def resolve(ref, ctx) do
+    @adapter.resolve(ref, put_options(ctx))
+  end
+
+  @spec fetch(ref :: Ref.t(), ctx :: Context.t()) ::
+          {:ok, Types.json_value()} | {:error, Types.error()}
+  def fetch(ref, ctx) do
+    @adapter.fetch(ref, put_options(ctx))
+  end
+
+  defp put_options(ctx) do
+    %{ctx | opts: @opts}
   end
 end

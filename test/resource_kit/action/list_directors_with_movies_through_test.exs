@@ -1,6 +1,6 @@
 defmodule ResourceKit.Action.ListDirectorsWithMoviesThroughTest do
   use ResourceKit.Case.Database, async: true
-  use ResourceKit.Case.Pipeline, async: true
+  use ResourceKit.Case.FileLoader, async: true
 
   @director_name "directors"
   @director_columns [
@@ -36,9 +36,11 @@ defmodule ResourceKit.Action.ListDirectorsWithMoviesThroughTest do
       {"M. Night Shyamalan", ["Trap", "The Watchers"]}
     ])
 
+    root = URI.new!("actions/list_directors_with_movies_through.json")
     params = %{"pagination" => %{"offset" => 0, "limit" => 2}}
 
-    assert {:ok, %{"data" => data, "pagination" => pagination}} = ResourceKit.list(action, params)
+    assert {:ok, %{"data" => data, "pagination" => pagination}} =
+             ResourceKit.list(action, params, root: root)
 
     assert match?(
              [

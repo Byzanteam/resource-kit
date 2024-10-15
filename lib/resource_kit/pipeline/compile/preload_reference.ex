@@ -10,6 +10,7 @@ defmodule ResourceKit.Pipeline.Compile.PreloadReference do
 
   @behaviour Pluggable
 
+  alias ResourceKit.Deref.Context, as: DerefContext
   alias ResourceKit.Pipeline.Compile.Token
   alias ResourceKit.Schema.Column
   alias ResourceKit.Schema.Ref
@@ -21,10 +22,10 @@ defmodule ResourceKit.Pipeline.Compile.PreloadReference do
   @impl Pluggable
   def call(%Token{halted: true} = token, _opts), do: token
 
-  def call(%Token{} = token, _opts) do
+  def call(%Token{context: context} = token, _opts) do
     action = Token.fetch_assign!(token, :action)
 
-    case preload_schema(action.schema) do
+    case preload_schema(action.schema, context) do
       {:ok, schema, references} ->
         token
         |> Token.put_assign(:action, %{action | schema: schema})
@@ -35,10 +36,10 @@ defmodule ResourceKit.Pipeline.Compile.PreloadReference do
     end
   end
 
-  defp preload_schema(%Schema{} = schema, references \\ %{}) do
+  defp preload_schema(%Schema{} = schema, context, references \\ %{}) do
     schema.columns
     |> Enum.reduce_while({:ok, [], references}, fn column, {:ok, columns, references} ->
-      case preload_column(column, references) do
+      case preload_column(column, context, references) do
         {:ok, column, references} -> {:cont, {:ok, [column | columns], references}}
         {:error, reason} -> {:halt, {:error, reason}}
       end
@@ -49,31 +50,39 @@ defmodule ResourceKit.Pipeline.Compile.PreloadReference do
     end
   end
 
-  defp preload_column(column, references)
+  defp preload_column(column, context, references)
 
-  defp preload_column(%Column.Literal{} = column, references), do: {:ok, column, references}
+  defp preload_column(%Column.Literal{} = column, _context, references),
+    do: {:ok, column, references}
 
-  defp preload_column(column, references)
+  defp preload_column(column, context, references)
        when is_struct(column, Column.Belongs) or is_struct(column, Column.Has) do
     with {:ok, schema, references} <-
-           resolve_association_schema(column.association_schema, references),
-         {:ok, _schema, references} <- preload_schema(schema, references) do
+           resolve_association_schema(column.association_schema, context, references),
+         {:ok, _schema, references} <-
+           preload_schema(schema, update_context(column.association_schema, context), references) do
       {:ok, column, references}
     end
   end
 
-  defp resolve_association_schema(%Ref{} = ref, references) do
-    case resolve(ref, references) do
+  defp resolve_association_schema(%Ref{} = ref, context, references) do
+    case resolve(ref, context, references) do
       {:ok, schema} -> {:ok, schema, Map.put_new(references, ref, schema)}
       {:error, reason} -> {:error, reason}
     end
   end
 
-  defp resolve_association_schema(schema, references), do: {:ok, schema, references}
+  defp resolve_association_schema(schema, _context, references), do: {:ok, schema, references}
 
-  defp resolve(ref, references) do
+  defp update_context(%Ref{uri: uri}, context) do
+    %{context | current: uri}
+  end
+
+  defp update_context(_schema, context), do: context
+
+  defp resolve(ref, context, references) do
     with :error <- Map.fetch(references, ref) do
-      ResourceKit.Utils.resolve_association_schema(ref)
+      ResourceKit.Utils.resolve_association_schema(ref, %DerefContext{id: context.current})
     end
   end
 end

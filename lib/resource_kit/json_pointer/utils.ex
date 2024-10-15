@@ -24,7 +24,10 @@ defmodule ResourceKit.JSONPointer.Utils do
   def resolve(parent, [], ctx), do: {:ok, parent, ctx}
 
   def resolve(parent, [key | rest], ctx) when is_map(parent) do
-    case Map.fetch(parent, key) do
+    parent
+    |> stringify_keys()
+    |> Map.fetch(key)
+    |> case do
       {:ok, data} -> resolve(data, rest, push_token(ctx, key))
       :error -> {:error, {@key_not_exists, location: encode_location(ctx), key: key}}
     end
@@ -41,6 +44,16 @@ defmodule ResourceKit.JSONPointer.Utils do
       false ->
         {:error, {@index_out_of_bounds, location: encode_location(ctx), index: index}}
     end
+  end
+
+  defp stringify_keys(data) when is_struct(data) do
+    data
+    |> Map.from_struct()
+    |> stringify_keys()
+  end
+
+  defp stringify_keys(data) do
+    JetExt.Map.stringify_keys(data)
   end
 
   # leading zeros are not allowed for index

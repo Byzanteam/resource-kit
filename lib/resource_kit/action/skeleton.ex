@@ -55,14 +55,17 @@ defmodule ResourceKit.Action.Skeleton do
       alias ResourceKit.Pipeline.Compile.Token, as: CompileToken
       alias ResourceKit.Pipeline.Execute.Token, as: ExecuteToken
 
-      def run(action, params) do
-        with {:ok, %{action: action, references: references}} <- __compile__(action) do
-          __execute__(action, references, params)
+      def run(action, params, opts) do
+        with {:ok, %{action: action, references: references}} <- __compile__(action, opts) do
+          __execute__(action, references, params, opts)
         end
       end
 
-      defp __compile__(action) do
-        %CompileToken{action: action}
+      defp __compile__(action, opts) do
+        root = Keyword.fetch!(opts, :root)
+        context = %CompileToken.Context{root: root, current: root}
+
+        %CompileToken{action: action, context: context}
         |> Pluggable.run([&__MODULE__.compile(&1, [])])
         |> case do
           %CompileToken{halted: false} = token -> {:ok, token.assigns}
@@ -70,8 +73,11 @@ defmodule ResourceKit.Action.Skeleton do
         end
       end
 
-      defp __execute__(action, references, params) do
-        %ExecuteToken{action: action, references: references, params: params}
+      defp __execute__(action, references, params, opts) do
+        root = Keyword.fetch!(opts, :root)
+        context = %ExecuteToken.Context{root: root, current: root}
+
+        %ExecuteToken{action: action, references: references, params: params, context: context}
         |> Pluggable.run([&__MODULE__.execute(&1, [])])
         |> case do
           %ExecuteToken{halted: false} = token -> ExecuteToken.fetch_assign(token, :result)

@@ -1,6 +1,6 @@
 defmodule ResourceKit.Action.ListMoviesWithPosterThroughTest do
   use ResourceKit.Case.Database, async: true
-  use ResourceKit.Case.Pipeline, async: true
+  use ResourceKit.Case.FileLoader, async: true
 
   @movie_name "movies"
   @movie_columns [
@@ -38,9 +38,11 @@ defmodule ResourceKit.Action.ListMoviesWithPosterThroughTest do
       {"The Watchers", "https://posters.movie.org/the-watchers.png"}
     ])
 
+    root = URI.new!("actions/list_movies_with_poster_through.json")
     params = %{"pagination" => %{"offset" => 0, "limit" => 2}}
 
-    assert {:ok, %{"data" => data, "pagination" => pagination}} = ResourceKit.list(action, params)
+    assert {:ok, %{"data" => data, "pagination" => pagination}} =
+             ResourceKit.list(action, params, root: root)
 
     assert match?(
              [

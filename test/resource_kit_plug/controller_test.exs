@@ -1,6 +1,5 @@
 defmodule ResourceKitPlug.ControllerTest do
   use ResourceKit.Case.Database, async: true
-  use ResourceKit.Case.Pipeline, async: true
 
   @uri "volume://action:deployment@/actions/movies/insert.json"
   @movie_name "movies"
@@ -38,9 +37,7 @@ defmodule ResourceKitPlug.ControllerTest do
 
   describe "fetch action" do
     test "fails" do
-      expect(ResourceKit.Utils, :deref, fn _ref -> {:error, {"does not exist", []}} end)
-
-      assert_raise PhxJsonRpc.Error.InvalidParams, ~r|does not exist|, fn ->
+      assert_raise PhxJsonRpc.Error.InvalidParams, ~r|enoent|, fn ->
         execute(:insert, %{
           uri: "volume://action:deployment@/actions/resources/operate.json",
           params: %{}
@@ -51,7 +48,6 @@ defmodule ResourceKitPlug.ControllerTest do
 
   describe "run" do
     setup :setup_tables
-    setup :deref_json
 
     @tag [tables: [{@movie_name, @movie_columns}]]
     test "message" do

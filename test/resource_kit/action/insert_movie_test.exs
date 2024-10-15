@@ -1,6 +1,6 @@
 defmodule ResourceKit.Action.InsertMovieTest do
   use ResourceKit.Case.Database, async: true
-  use ResourceKit.Case.Pipeline, async: true
+  use ResourceKit.Case.FileLoader, async: true
 
   @movie_name "movies"
   @movie_columns [
@@ -20,6 +20,8 @@ defmodule ResourceKit.Action.InsertMovieTest do
 
   @tag jsons: [action: "actions/insert_movie.json"]
   test "works", %{action: action} do
+    root = URI.new!("actions/insert_movie.json")
+
     params = %{
       "title" => "Spy x Family Code: White",
       "likes" => 2878,
@@ -37,11 +39,13 @@ defmodule ResourceKit.Action.InsertMovieTest do
               "release_date" => ~D[2024-04-30],
               "created_at" => ~U[2023-12-22 14:23:07.000000Z],
               "tags" => ["Animation", "Comedy"]
-            }} = ResourceKit.insert(action, params)
+            }} = ResourceKit.insert(action, params, root: root)
   end
 
   @tag jsons: [action: "actions/insert_movie.json"]
   test "failed", %{action: action} do
+    root = URI.new!("actions/insert_movie.json")
+
     params = %{
       "title" => "Spy x Family Code: White",
       "likes" => 2878,
@@ -50,7 +54,7 @@ defmodule ResourceKit.Action.InsertMovieTest do
       "tags" => ["Animation", "Comedy"]
     }
 
-    assert {:error, changeset} = ResourceKit.insert(action, params)
+    assert {:error, changeset} = ResourceKit.insert(action, params, root: root)
     assert match?(%{release_date: ["is invalid"]}, errors_on(changeset))
   end
 end
