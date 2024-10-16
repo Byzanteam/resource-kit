@@ -39,7 +39,7 @@ defmodule ResourceKit.MixProject do
       {:jet_ext, "~> 0.3.0"},
       {:mimic, "~> 1.10", only: [:test], runtime: false},
       {:pegasus, "~> 0.2.5"},
-      {:phx_json_rpc, "~> 0.6.0"},
+      {:phx_json_rpc, "~> 0.7.0"},
       {:pluggable, "~> 1.1"},
       {:polymorphic_embed, "~> 5.0"},
       {:postgrex, ">= 0.0.0"},
