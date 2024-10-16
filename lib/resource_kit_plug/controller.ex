@@ -4,9 +4,6 @@ defmodule ResourceKitPlug.Controller do
   alias ResourceKit.Schema.Ref
   alias ResourceKit.Schema.Request
 
-  # TODO: remove this when deref is implemented
-  @dialyzer {:no_match, fetch_action: 1}
-
   for type <- [:insert, :list] do
     @spec unquote(type)(request :: map(), ctx :: PhxJsonRpc.Router.Context.t()) :: map()
     def unquote(type)(request, _ctx) do
@@ -43,7 +40,9 @@ defmodule ResourceKitPlug.Controller do
   end
 
   defp fetch_action(%Request{uri: uri}) do
-    case ResourceKit.Utils.deref(%Ref{uri: uri}) do
+    alias ResourceKit.Deref.Context
+
+    case ResourceKit.Deref.fetch(%Ref{uri: uri}, %Context{current: %Ref{uri: uri}}) do
       {:ok, action} ->
         {:ok, action}
 
@@ -54,8 +53,8 @@ defmodule ResourceKitPlug.Controller do
     end
   end
 
-  defp run(%Request{params: params}, type, action) do
-    case apply(ResourceKit, type, [action, params]) do
+  defp run(%Request{uri: uri, params: params}, type, action) do
+    case apply(ResourceKit, type, [action, params, [root: uri]]) do
       {:ok, result} ->
         {:ok, result}
 

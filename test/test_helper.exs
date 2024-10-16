@@ -2,6 +2,4 @@
 
 Ecto.Adapters.SQL.Sandbox.mode(ResourceKit.Repo, :manual)
 
-Mimic.copy(ResourceKit.Utils)
-
 ExUnit.start(capture_log: true)

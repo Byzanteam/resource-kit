@@ -1,6 +1,6 @@
 defmodule ResourceKit.Action.ListDirectorsWithMoviesByRefAssociationSchemaTest do
   use ResourceKit.Case.Database, async: true
-  use ResourceKit.Case.Pipeline, async: true
+  use ResourceKit.Case.FileLoader, async: true
 
   @director_name "directors"
   @movie_name "movies"
@@ -17,7 +17,6 @@ defmodule ResourceKit.Action.ListDirectorsWithMoviesByRefAssociationSchemaTest d
 
   setup :setup_tables
   setup :load_jsons
-  setup :deref_json
 
   @tag tables: [{@director_name, @director_columns}, {@movie_name, @movie_columns}]
   @tag jsons: [action: "actions/list_directors_with_movies_by_ref_association_schema.json"]
@@ -28,9 +27,11 @@ defmodule ResourceKit.Action.ListDirectorsWithMoviesByRefAssociationSchemaTest d
       {"M. Night Shyamalan", ["Trap", "The Watchers"]}
     ])
 
+    root = URI.new!("actions/list_directors_with_movies_by_ref_association_schema.json")
     params = %{"pagination" => %{"offset" => 0, "limit" => 2}}
 
-    assert {:ok, %{"data" => data, "pagination" => pagination}} = ResourceKit.list(action, params)
+    assert {:ok, %{"data" => data, "pagination" => pagination}} =
+             ResourceKit.list(action, params, root: root)
 
     assert match?(
              [
