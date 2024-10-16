@@ -1,6 +1,6 @@
 defmodule ResourceKit.Pipeline.Execute.RunTest do
   use ResourceKit.Case.Database, async: true
-  use ResourceKit.Case.Pipeline, async: true
+  use ResourceKit.Case.FileLoader, async: true
 
   alias ResourceKit.Pipeline.Execute.Run
   alias ResourceKit.Pipeline.Execute.Token
@@ -39,6 +39,13 @@ defmodule ResourceKit.Pipeline.Execute.RunTest do
   end
 
   defp build_token(multi) do
-    Token.put_assign(%Token{action: %{}, references: %{}, params: %{}}, :multi, multi)
+    uri = URI.new!("uri")
+    context = %Token.Context{root: uri, current: uri}
+
+    Token.put_assign(
+      %Token{action: %{}, references: %{}, params: %{}, context: context},
+      :multi,
+      multi
+    )
   end
 end

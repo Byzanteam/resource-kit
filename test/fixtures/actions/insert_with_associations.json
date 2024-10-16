@@ -9,7 +9,7 @@
         "primary_key": true
       },
       {
-        "name": "ip",
+        "name": "uri",
         "type": "text"
       },
       {
@@ -121,10 +121,10 @@
     "changes": [
       {
         "type": "column",
-        "name": "ip",
+        "name": "uri",
         "value": {
           "type": "context",
-          "value": "/ip"
+          "value": "/root"
         }
       },
       {
@@ -245,10 +245,10 @@
   "returning_schema": [
     {
       "type": "column",
-      "name": "ip",
+      "name": "uri",
       "value": {
         "type": "schema",
-        "value": "/ip"
+        "value": "/uri"
       }
     },
     {

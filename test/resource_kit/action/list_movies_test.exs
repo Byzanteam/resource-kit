@@ -1,6 +1,6 @@
 defmodule ResourceKit.Action.ListMoviesTest do
   use ResourceKit.Case.Database, async: true
-  use ResourceKit.Case.Pipeline, async: true
+  use ResourceKit.Case.FileLoader, async: true
 
   @movie_name "movies"
   @movie_columns [
@@ -68,6 +68,8 @@ defmodule ResourceKit.Action.ListMoviesTest do
 
       setup_dataset(@movie_name, @movie_columns, rows)
 
+      root = URI.new!("actions/list_movies.json")
+
       filter = %{
         "operator" => "eq",
         "operands" => [
@@ -85,7 +87,7 @@ defmodule ResourceKit.Action.ListMoviesTest do
       }
 
       assert {:ok, %{"data" => data, "pagination" => pagination}} =
-               ResourceKit.list(action, params)
+               ResourceKit.list(action, params, root: root)
 
       assert match?([%{"标题" => "Longlegs"}, %{"标题" => "Trap"}], data)
       assert match?(%{"offset" => 0, "limit" => 2, "total" => 3}, pagination)
@@ -97,7 +99,7 @@ defmodule ResourceKit.Action.ListMoviesTest do
       }
 
       assert {:ok, %{"data" => data, "pagination" => pagination}} =
-               ResourceKit.list(action, params)
+               ResourceKit.list(action, params, root: root)
 
       assert match?([%{"标题" => "Twisters"}], data)
       assert match?(%{"offset" => 2, "limit" => 2, "total" => 3}, pagination)

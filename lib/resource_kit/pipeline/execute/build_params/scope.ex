@@ -20,11 +20,13 @@ defmodule ResourceKit.Pipeline.Execute.BuildParams.Scope do
   alias ResourceKit.JSONPointer.Context
   alias ResourceKit.JSONPointer.Relative
 
+  alias ResourceKit.Pipeline.Execute.Token
+
   typedstruct do
     field :root_value, Types.json_value(), enforce: true
     field :current_value, Types.json_value(), enforce: true
     field :location, [token()], default: []
-    field :context, map(), enforce: true
+    field :context, Token.Context.t(), enforce: true
   end
 
   @typep token() :: binary() | integer()
