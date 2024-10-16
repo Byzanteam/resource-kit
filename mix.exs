@@ -17,7 +17,7 @@ defmodule ResourceKit.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {ResourceKit.Application, []}
+      mod: {ResourceKitCLI.Application, []}
     ]
   end
 

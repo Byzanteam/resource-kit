@@ -1,4 +1,4 @@
-defmodule ResourceKit.Application do
+defmodule ResourceKitCLI.Application do
   @moduledoc false
 
   use Application
