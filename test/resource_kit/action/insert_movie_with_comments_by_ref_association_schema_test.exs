@@ -1,6 +1,6 @@
 defmodule ResourceKit.Action.InsertMovieWithCommentsByRefAssociationSchemaTest do
   use ResourceKit.Case.Database, async: true
-  use ResourceKit.Case.Pipeline, async: true
+  use ResourceKit.Case.FileLoader, async: true
 
   @movie_name "movies"
   @poster_name "posters"
@@ -44,10 +44,11 @@ defmodule ResourceKit.Action.InsertMovieWithCommentsByRefAssociationSchemaTest d
 
   setup :setup_tables
   setup :load_jsons
-  setup :deref_json
 
   @tag jsons: [action: "actions/insert_movie_with_comments_by_ref_association_schema.json"]
   test "works", %{action: action} do
+    root = URI.new!("actions/insert_movie_with_comments_by_ref_association_schema.json")
+
     params = %{
       "foo" => "foo",
       "title" => "Spy x Family Code: White",
@@ -91,6 +92,6 @@ defmodule ResourceKit.Action.InsertMovieWithCommentsByRefAssociationSchemaTest d
                   ]
                 }
               ]
-            }} = ResourceKit.insert(action, params)
+            }} = ResourceKit.insert(action, params, root: root)
   end
 end

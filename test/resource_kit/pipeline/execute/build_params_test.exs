@@ -1,17 +1,16 @@
 defmodule ResourceKit.Pipeline.Execute.BuildParamsTest do
-  use ResourceKit.Case.Pipeline, async: true
+  use ResourceKit.Case.FileLoader, async: true
 
   alias ResourceKit.Pipeline.Compile
   alias ResourceKit.Pipeline.Execute
 
   setup :load_jsons
-  setup :deref_json
   setup :setup_action
 
   @tag jsons: [action: "actions/insert_with_associations.json"]
   test "works", %{action: action} do
+    uri = URI.new!("actions/insert_with_associations.json")
     caption = "Spy x Family Code: White"
-    ip = "192.168.168.192"
 
     params = %{
       "caption" => caption,
@@ -27,14 +26,14 @@ defmodule ResourceKit.Pipeline.Execute.BuildParamsTest do
       action: action,
       references: %{},
       params: params,
-      context: %{"ip" => ip}
+      context: %Execute.Token.Context{root: uri, current: uri}
     }
 
     assert %Execute.Token{halted: false} = token = Execute.BuildParams.call(token, [])
 
     assert {:ok,
             %{
-              "ip" => ^ip,
+              "uri" => ^uri,
               "title" => ^caption,
               "released" => true,
               "poster" => %{
@@ -51,8 +50,8 @@ defmodule ResourceKit.Pipeline.Execute.BuildParamsTest do
 
   @tag jsons: [action: "actions/insert_with_associations.json"]
   test "association could be nil", %{action: action} do
+    uri = URI.new!("actions/insert_with_associations.json")
     caption = "Spy x Family Code: White"
-    ip = "192.168.168.192"
 
     params = %{"caption" => caption, "default_age" => 24}
 
@@ -60,14 +59,14 @@ defmodule ResourceKit.Pipeline.Execute.BuildParamsTest do
       action: action,
       references: %{},
       params: params,
-      context: %{"ip" => ip}
+      context: %Execute.Token.Context{root: uri, current: uri}
     }
 
     assert %Execute.Token{halted: false} = token = Execute.BuildParams.call(token, [])
 
     assert {:ok,
             %{
-              "ip" => ^ip,
+              "uri" => ^uri,
               "title" => ^caption,
               "released" => true,
               "poster" => %{
@@ -80,7 +79,7 @@ defmodule ResourceKit.Pipeline.Execute.BuildParamsTest do
 
   @tag jsons: [action: "actions/insert_with_associations.json"]
   test "column could be nil", %{action: action} do
-    ip = "192.168.168.192"
+    uri = URI.new!("actions/insert_with_associations.json")
 
     params = %{
       "default_age" => 24,
@@ -95,14 +94,14 @@ defmodule ResourceKit.Pipeline.Execute.BuildParamsTest do
       action: action,
       references: %{},
       params: params,
-      context: %{"ip" => ip}
+      context: %Execute.Token.Context{root: uri, current: uri}
     }
 
     assert %Execute.Token{halted: false} = token = Execute.BuildParams.call(token, [])
 
     assert {:ok,
             %{
-              "ip" => ^ip,
+              "uri" => ^uri,
               "title" => nil,
               "released" => true,
               "poster" => %{
@@ -118,7 +117,7 @@ defmodule ResourceKit.Pipeline.Execute.BuildParamsTest do
   end
 
   @tag jsons: [action: "actions/insert_movie_with_comments_by_ref_association_schema.json"]
-  test "association schema with ref", %{action: action} do
+  test "association schema with ref", ctx do
     params = %{
       "foo" => "foo",
       "title" => "Spy x Family Code: White",
@@ -142,7 +141,7 @@ defmodule ResourceKit.Pipeline.Execute.BuildParamsTest do
       ]
     }
 
-    token = %Execute.Token{action: action, references: %{}, params: params}
+    token = build_token(ctx, params)
 
     assert %Execute.Token{halted: false} = token = Execute.BuildParams.call(token, [])
 
@@ -166,11 +165,26 @@ defmodule ResourceKit.Pipeline.Execute.BuildParamsTest do
   end
 
   defp setup_action(ctx) do
-    %{action: action} = ctx
+    %{jsons: jsons, action: action} = ctx
 
+    uri = jsons |> Keyword.fetch!(:action) |> URI.new!()
     opts = Compile.Cast.init(schema: ResourceKit.Schema.Action.Insert)
-    token = Compile.Cast.call(%Compile.Token{action: action, assigns: %{action: action}}, opts)
+    context = %Compile.Token.Context{root: uri, current: uri}
+
+    token =
+      Compile.Cast.call(
+        %Compile.Token{action: action, context: context, assigns: %{action: action}},
+        opts
+      )
 
     [action: Compile.Token.fetch_assign!(token, :action)]
+  end
+
+  defp build_token(ctx, params) do
+    %{jsons: jsons, action: action} = ctx
+
+    uri = jsons |> Keyword.fetch!(:action) |> URI.new!()
+    context = %Execute.Token.Context{root: uri, current: uri}
+    %Execute.Token{action: action, references: %{}, params: params, context: context}
   end
 end

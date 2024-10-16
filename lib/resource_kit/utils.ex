@@ -5,6 +5,7 @@ defmodule ResourceKit.Utils do
 
   alias ResourceKit.Types
 
+  alias ResourceKit.Deref.Context, as: DerefContext
   alias ResourceKit.Schema.Column
   alias ResourceKit.Schema.Ref
   alias ResourceKit.Schema.Schema
@@ -80,12 +81,6 @@ defmodule ResourceKit.Utils do
     Map.fetch!(@generators, type)
   end
 
-  # TODO: implement
-  @spec deref(ref :: map()) :: {:ok, Types.json_value()}
-  def deref(_ref) do
-    {:ok, %{}}
-  end
-
   @spec fetch_primary_key(schema :: Schema.t(), opts :: keyword()) ::
           {:ok, atom()} | {:ok, {atom(), atom()}} | :error
   def fetch_primary_key(schema, opts \\ [])
@@ -107,18 +102,17 @@ defmodule ResourceKit.Utils do
     end)
   end
 
-  @spec resolve_association_schema(ref_or_schema :: Ref.t() | Schema.t()) ::
+  @spec resolve_association_schema(ref_or_schema :: Ref.t() | Schema.t(), ctx :: DerefContext.t()) ::
           {:ok, Schema.t()} | {:error, Ecto.Changeset.t() | Types.error()}
-  def resolve_association_schema(%Ref{} = ref) do
-    # use qualified names of internal functions so that mimic works
-    with {:ok, params} <- __MODULE__.deref(ref) do
+  def resolve_association_schema(%Ref{} = ref, ctx) do
+    with {:ok, params} <- ResourceKit.Deref.fetch(ref, ctx) do
       params
       |> Schema.changeset()
       |> Ecto.Changeset.apply_action(:insert)
     end
   end
 
-  def resolve_association_schema(%Schema{} = schema), do: {:ok, schema}
+  def resolve_association_schema(%Schema{} = schema, _ctx), do: {:ok, schema}
 
   @spec __root__() :: binary()
   def __root__, do: "root"

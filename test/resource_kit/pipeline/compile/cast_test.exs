@@ -1,5 +1,5 @@
 defmodule ResourceKit.Pipeline.Compile.CastTest do
-  use ResourceKit.Case.Pipeline, async: true
+  use ResourceKit.Case.FileLoader, async: true
 
   alias ResourceKit.Pipeline.Compile.Cast
   alias ResourceKit.Pipeline.Compile.Token
@@ -38,8 +38,11 @@ defmodule ResourceKit.Pipeline.Compile.CastTest do
   end
 
   defp setup_token(ctx) do
-    %{action: action} = ctx
+    %{jsons: jsons, action: action} = ctx
 
-    [token: %Token{action: action, assigns: %{action: action}}]
+    uri = jsons |> Keyword.fetch!(:action) |> URI.new!()
+    context = %Token.Context{root: uri, current: uri}
+
+    [token: %Token{action: action, context: context, assigns: %{action: action}}]
   end
 end

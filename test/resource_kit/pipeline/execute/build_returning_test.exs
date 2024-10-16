@@ -169,10 +169,17 @@ defmodule ResourceKit.Pipeline.Execute.BuildReturningTest do
   end
 
   defp setup_action(ctx) do
-    %{action: action} = ctx
+    %{jsons: jsons, action: action} = ctx
 
+    uri = jsons |> Keyword.fetch!(:action) |> URI.new!()
     opts = Compile.Cast.init(schema: ResourceKit.Schema.Action.Insert)
-    token = Compile.Cast.call(%Compile.Token{action: action, assigns: %{action: action}}, opts)
+    context = %Compile.Token.Context{root: uri, current: uri}
+
+    token =
+      Compile.Cast.call(
+        %Compile.Token{action: action, context: context, assigns: %{action: action}},
+        opts
+      )
 
     [action: Compile.Token.fetch_assign!(token, :action)]
   end

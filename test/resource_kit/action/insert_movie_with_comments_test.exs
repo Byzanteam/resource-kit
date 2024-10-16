@@ -1,6 +1,6 @@
 defmodule ResourceKit.Action.InsertMovieWithCommentsTest do
   use ResourceKit.Case.Database, async: true
-  use ResourceKit.Case.Pipeline, async: true
+  use ResourceKit.Case.FileLoader, async: true
 
   @movie_name "movies"
   @poster_name "posters"
@@ -52,6 +52,8 @@ defmodule ResourceKit.Action.InsertMovieWithCommentsTest do
 
   @tag jsons: [action: "actions/insert_movie_with_comments.json"]
   test "works", %{action: action} do
+    root = URI.new!("actions/insert_movie_with_comments.json")
+
     params = %{
       "foo" => "foo",
       "title" => "Spy x Family Code: White",
@@ -105,6 +107,6 @@ defmodule ResourceKit.Action.InsertMovieWithCommentsTest do
                   ]
                 }
               ]
-            }} = ResourceKit.insert(action, params)
+            }} = ResourceKit.insert(action, params, root: root)
   end
 end
