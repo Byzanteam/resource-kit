@@ -3,7 +3,7 @@ defmodule ResourceKitPlug.Router do
 
   use Plug.Router
 
-  @dynamic_private :__dynamic_private__
+  @dynamic_private :resource_kit_plug_dynamic_repo
 
   plug Plug.Logger
   plug Plug.Parsers, parsers: [{:json, json_decoder: Jason}]
