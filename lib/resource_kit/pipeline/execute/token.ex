@@ -1,16 +1,29 @@
 defmodule ResourceKit.Pipeline.Execute.Token do
   @moduledoc false
 
-  use TypedStruct
   use ResourceKit.Pipeline.Token
 
   alias ResourceKit.Types
 
   alias ResourceKit.Schema.Ref
 
-  typedstruct module: Context do
-    field :root, URI.t(), enforce: true
-    field :current, URI.t(), enforce: true
+  defmodule Context do
+    @moduledoc false
+
+    use TypedStruct
+
+    typedstruct do
+      field :root, URI.t(), enforce: true
+      field :current, URI.t(), enforce: true
+      field :dynamic, atom() | pid(), enforce: true
+    end
+
+    def new(args) do
+      root = Keyword.fetch!(args, :root)
+      dynamic = Keyword.fetch!(args, :dynamic)
+
+      struct(__MODULE__, root: root, current: root, dynamic: dynamic)
+    end
   end
 
   token do

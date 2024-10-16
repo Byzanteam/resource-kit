@@ -40,7 +40,7 @@ defmodule ResourceKit.Action.ListDirectorsWithMoviesThroughTest do
     params = %{"pagination" => %{"offset" => 0, "limit" => 2}}
 
     assert {:ok, %{"data" => data, "pagination" => pagination}} =
-             ResourceKit.list(action, params, root: root)
+             ResourceKit.list(action, params, root: root, dynamic: ResourceKit.Repo)
 
     assert match?(
              [

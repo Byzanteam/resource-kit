@@ -24,8 +24,7 @@ defmodule ResourceKit.Pipeline.Execute.BuildTest do
   end
 
   defp build_token(action) do
-    uri = URI.new!("uri")
-    context = %Token.Context{root: uri, current: uri}
+    context = Token.Context.new(root: URI.new!("uri"), dynamic: ResourceKit.Repo)
 
     Token.put_assign(
       %Token{action: action, references: %{}, params: %{}, context: context},

@@ -87,7 +87,7 @@ defmodule ResourceKit.Action.ListMoviesTest do
       }
 
       assert {:ok, %{"data" => data, "pagination" => pagination}} =
-               ResourceKit.list(action, params, root: root)
+               ResourceKit.list(action, params, root: root, dynamic: ResourceKit.Repo)
 
       assert match?([%{"标题" => "Longlegs"}, %{"标题" => "Trap"}], data)
       assert match?(%{"offset" => 0, "limit" => 2, "total" => 3}, pagination)
@@ -99,7 +99,7 @@ defmodule ResourceKit.Action.ListMoviesTest do
       }
 
       assert {:ok, %{"data" => data, "pagination" => pagination}} =
-               ResourceKit.list(action, params, root: root)
+               ResourceKit.list(action, params, root: root, dynamic: ResourceKit.Repo)
 
       assert match?([%{"标题" => "Twisters"}], data)
       assert match?(%{"offset" => 2, "limit" => 2, "total" => 3}, pagination)

@@ -107,6 +107,6 @@ defmodule ResourceKit.Action.InsertMovieWithCommentsTest do
                   ]
                 }
               ]
-            }} = ResourceKit.insert(action, params, root: root)
+            }} = ResourceKit.insert(action, params, root: root, dynamic: ResourceKit.Repo)
   end
 end

@@ -5,13 +5,6 @@ defmodule ResourceKit.Pipeline.Execute.RunTest do
   alias ResourceKit.Pipeline.Execute.Run
   alias ResourceKit.Pipeline.Execute.Token
 
-  describe "init/1" do
-    test "works" do
-      assert %Run.Options{repo: ResourceKit.Repo} = Run.init([])
-      assert %Run.Options{repo: :dummy_repo} = Run.init(repo: :dummy_repo)
-    end
-  end
-
   describe "call/2" do
     setup :setup_context
 
@@ -39,8 +32,7 @@ defmodule ResourceKit.Pipeline.Execute.RunTest do
   end
 
   defp build_token(multi) do
-    uri = URI.new!("uri")
-    context = %Token.Context{root: uri, current: uri}
+    context = Token.Context.new(root: URI.new!("uri"), dynamic: ResourceKit.Repo)
 
     Token.put_assign(
       %Token{action: %{}, references: %{}, params: %{}, context: context},

@@ -1,4 +1,4 @@
-defmodule ResourceKitCLI.Endpoint do
+defmodule ResourceKit.Repo.Supervisor do
   @moduledoc false
 
   use Supervisor
@@ -10,10 +10,8 @@ defmodule ResourceKitCLI.Endpoint do
 
   @impl Supervisor
   def init(args) do
-    {server, options} = Keyword.pop(args, :server, false)
-
-    if server do
-      Supervisor.init([{Bandit, options}], strategy: :one_for_one)
+    if Keyword.get(args, :server, false) do
+      Supervisor.init([ResourceKit.Repo], strategy: :one_for_one)
     else
       :ignore
     end
@@ -21,8 +19,7 @@ defmodule ResourceKitCLI.Endpoint do
 
   defp configuration(args) do
     :resource_kit
-    |> Application.get_env(__MODULE__, [])
+    |> Application.get_env(ResourceKit.Repo, [])
     |> Keyword.merge(args)
-    |> Keyword.put(:plug, ResourceKitCLI.Plug)
   end
 end

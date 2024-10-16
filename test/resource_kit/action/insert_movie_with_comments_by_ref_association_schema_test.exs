@@ -92,6 +92,6 @@ defmodule ResourceKit.Action.InsertMovieWithCommentsByRefAssociationSchemaTest d
                   ]
                 }
               ]
-            }} = ResourceKit.insert(action, params, root: root)
+            }} = ResourceKit.insert(action, params, root: root, dynamic: ResourceKit.Repo)
   end
 end

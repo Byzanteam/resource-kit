@@ -39,7 +39,7 @@ defmodule ResourceKit.Action.InsertMovieTest do
               "release_date" => ~D[2024-04-30],
               "created_at" => ~U[2023-12-22 14:23:07.000000Z],
               "tags" => ["Animation", "Comedy"]
-            }} = ResourceKit.insert(action, params, root: root)
+            }} = ResourceKit.insert(action, params, root: root, dynamic: ResourceKit.Repo)
   end
 
   @tag jsons: [action: "actions/insert_movie.json"]
@@ -54,7 +54,9 @@ defmodule ResourceKit.Action.InsertMovieTest do
       "tags" => ["Animation", "Comedy"]
     }
 
-    assert {:error, changeset} = ResourceKit.insert(action, params, root: root)
+    assert {:error, changeset} =
+             ResourceKit.insert(action, params, root: root, dynamic: ResourceKit.Repo)
+
     assert match?(%{release_date: ["is invalid"]}, errors_on(changeset))
   end
 end

@@ -5,12 +5,11 @@ defmodule ResourceKit.Application do
 
   @impl Application
   def start(_type, _args) do
-    Supervisor.start_link(children(), strategy: :one_for_one, name: __MODULE__)
-  end
+    children = [
+      ResourceKit.Repo.Supervisor,
+      ResourceKitCLI.Endpoint
+    ]
 
-  if Mix.env() === :test do
-    defp children, do: [ResourceKit.Repo]
-  else
-    defp children, do: [ResourceKitCLI.Endpoint]
+    Supervisor.start_link(children, strategy: :one_for_one, name: __MODULE__)
   end
 end
