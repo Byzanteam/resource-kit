@@ -7,6 +7,6 @@ defmodule ResourceKitCLI.Plug do
   plug ResourceKitPlug.Router
 
   defp put_dynamic(conn, _opts) do
-    ResourceKitPlug.Router.put_dynamic(conn, ResourceKit.Repo)
+    ResourceKitPlug.Router.put_dynamic(conn, ResourceKit.Repo.adapter())
   end
 end

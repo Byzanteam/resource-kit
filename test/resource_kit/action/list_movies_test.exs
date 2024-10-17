@@ -15,12 +15,13 @@ defmodule ResourceKit.Action.ListMoviesTest do
 
   setup :setup_tables
   setup :load_jsons
+  setup :setup_options
 
   describe "list" do
     @describetag [tables: [{@movie_name, @movie_columns}]]
 
     @tag jsons: [action: "actions/list_movies.json"]
-    test "list movies", %{action: action} do
+    test "list movies", %{action: action, opts: opts} do
       rows = [
         %{
           "title" => "Longlegs",
@@ -68,8 +69,6 @@ defmodule ResourceKit.Action.ListMoviesTest do
 
       setup_dataset(@movie_name, @movie_columns, rows)
 
-      root = URI.new!("actions/list_movies.json")
-
       filter = %{
         "operator" => "eq",
         "operands" => [
@@ -87,7 +86,7 @@ defmodule ResourceKit.Action.ListMoviesTest do
       }
 
       assert {:ok, %{"data" => data, "pagination" => pagination}} =
-               ResourceKit.list(action, params, root: root, dynamic: ResourceKit.Repo)
+               ResourceKit.list(action, params, opts)
 
       assert match?([%{"标题" => "Longlegs"}, %{"标题" => "Trap"}], data)
       assert match?(%{"offset" => 0, "limit" => 2, "total" => 3}, pagination)
@@ -99,7 +98,7 @@ defmodule ResourceKit.Action.ListMoviesTest do
       }
 
       assert {:ok, %{"data" => data, "pagination" => pagination}} =
-               ResourceKit.list(action, params, root: root, dynamic: ResourceKit.Repo)
+               ResourceKit.list(action, params, opts)
 
       assert match?([%{"标题" => "Twisters"}], data)
       assert match?(%{"offset" => 2, "limit" => 2, "total" => 3}, pagination)
@@ -107,8 +106,16 @@ defmodule ResourceKit.Action.ListMoviesTest do
   end
 
   defp setup_dataset(table, columns, rows) do
+    repo = ResourceKit.Repo.adapter()
     schema = build_schema(table, columns)
     count = length(rows)
-    {:ok, {^count, nil}} = JetExt.Ecto.Schemaless.Repo.insert_all(ResourceKit.Repo, schema, rows)
+
+    {:ok, {^count, nil}} = JetExt.Ecto.Schemaless.Repo.insert_all(repo, schema, rows)
+  end
+
+  defp setup_options(%{jsons: jsons}) do
+    uri = jsons |> Keyword.fetch!(:action) |> URI.new!()
+
+    [opts: [root: uri, dynamic: ResourceKit.Repo.adapter()]]
   end
 end
