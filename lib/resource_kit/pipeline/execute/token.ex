@@ -15,10 +15,8 @@ defmodule ResourceKit.Pipeline.Execute.Token do
     typedstruct do
       field :root, URI.t(), enforce: true
       field :current, URI.t(), enforce: true
-      field :dynamic_repo, repo(), enforce: true
+      field :dynamic_repo, ResourceKit.Repo.dynamic_repo(), enforce: true
     end
-
-    @typep repo() :: atom() | pid()
 
     def new(args) do
       root = Keyword.fetch!(args, :root)

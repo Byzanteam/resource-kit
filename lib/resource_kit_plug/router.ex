@@ -10,7 +10,7 @@ defmodule ResourceKitPlug.Router do
   plug :match
   plug :dispatch
 
-  @spec put_dynamic(conn :: Plug.Conn.t(), dynamic_repo :: ResourceKit.Repo.repo()) ::
+  @spec put_dynamic(conn :: Plug.Conn.t(), dynamic_repo :: ResourceKit.Repo.dynamic_repo()) ::
           Plug.Conn.t()
   def put_dynamic(%Plug.Conn{} = conn, dynamic_repo) do
     put_private(conn, @dynamic_private, dynamic_repo)
