@@ -1,6 +1,5 @@
 defmodule ResourceKit.Pipeline.Execute.BuildTest do
   use ResourceKit.Case.FileLoader, async: true
-  use TypedStruct
 
   alias ResourceKit.Pipeline.Execute.Build
   alias ResourceKit.Pipeline.Execute.Token
@@ -24,8 +23,7 @@ defmodule ResourceKit.Pipeline.Execute.BuildTest do
   end
 
   defp build_token(action) do
-    uri = URI.new!("uri")
-    context = %Token.Context{root: uri, current: uri}
+    context = Token.Context.new(root: URI.new!("uri"), dynamic_repo: ResourceKit.Repo.adapter())
 
     Token.put_assign(
       %Token{action: action, references: %{}, params: %{}, context: context},

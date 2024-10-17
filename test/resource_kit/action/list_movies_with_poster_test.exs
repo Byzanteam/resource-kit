@@ -2,6 +2,8 @@ defmodule ResourceKit.Action.ListMoviesWithPosterTest do
   use ResourceKit.Case.Database, async: true
   use ResourceKit.Case.FileLoader, async: true
 
+  @repo ResourceKit.Repo.adapter()
+
   @movie_name "movies"
   @poster_name "posters"
   @movie_columns [
@@ -17,10 +19,11 @@ defmodule ResourceKit.Action.ListMoviesWithPosterTest do
 
   setup :setup_tables
   setup :load_jsons
+  setup :setup_options
 
   @tag tables: [{@movie_name, @movie_columns}, {@poster_name, @poster_columns}]
   @tag jsons: [action: "actions/list_movies_with_poster.json"]
-  test "list movies with poster by has_one association", %{action: action} do
+  test "list movies with poster by has_one association", %{action: action, opts: opts} do
     setup_dataset([
       {"Longlegs", "https://posters.movie.org/longlegs.png"},
       {"Twisters", "https://posters.movie.org/twisters.png"},
@@ -29,11 +32,10 @@ defmodule ResourceKit.Action.ListMoviesWithPosterTest do
       {"The Watchers", "https://posters.movie.org/the-watchers.png"}
     ])
 
-    root = URI.new!("actions/list_movies_with_poster.json")
     params = %{"pagination" => %{"offset" => 0, "limit" => 2}}
 
     assert {:ok, %{"data" => data, "pagination" => pagination}} =
-             ResourceKit.list(action, params, root: root)
+             ResourceKit.list(action, params, opts)
 
     assert match?(
              [
@@ -53,13 +55,19 @@ defmodule ResourceKit.Action.ListMoviesWithPosterTest do
     end)
   end
 
+  defp setup_options(%{jsons: jsons}) do
+    uri = jsons |> Keyword.fetch!(:action) |> URI.new!()
+
+    [opts: [root: uri, dynamic_repo: ResourceKit.Repo.adapter()]]
+  end
+
   defp insert_movie(title) do
     alias JetExt.Ecto.Schemaless.Repo
     alias JetExt.Ecto.Schemaless.Schema
 
     schema = build_schema(@movie_name, @movie_columns)
     changeset = Schema.changeset(schema, %{title: title})
-    Repo.insert(ResourceKit.Repo, schema, changeset)
+    Repo.insert(@repo, schema, changeset)
   end
 
   defp insert_poster(movie_id, url) do
@@ -68,6 +76,6 @@ defmodule ResourceKit.Action.ListMoviesWithPosterTest do
 
     schema = build_schema(@poster_name, @poster_columns)
     changeset = Schema.changeset(schema, %{movie_id: movie_id, url: url})
-    Repo.insert(ResourceKit.Repo, schema, changeset)
+    Repo.insert(@repo, schema, changeset)
   end
 end

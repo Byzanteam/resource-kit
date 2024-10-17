@@ -49,11 +49,10 @@ defmodule ResourceKit.Action.InsertMovieWithCommentsTest do
 
   setup :setup_tables
   setup :load_jsons
+  setup :setup_options
 
   @tag jsons: [action: "actions/insert_movie_with_comments.json"]
-  test "works", %{action: action} do
-    root = URI.new!("actions/insert_movie_with_comments.json")
-
+  test "works", %{action: action, opts: opts} do
     params = %{
       "foo" => "foo",
       "title" => "Spy x Family Code: White",
@@ -107,6 +106,12 @@ defmodule ResourceKit.Action.InsertMovieWithCommentsTest do
                   ]
                 }
               ]
-            }} = ResourceKit.insert(action, params, root: root)
+            }} = ResourceKit.insert(action, params, opts)
+  end
+
+  defp setup_options(%{jsons: jsons}) do
+    uri = jsons |> Keyword.fetch!(:action) |> URI.new!()
+
+    [opts: [root: uri, dynamic_repo: ResourceKit.Repo.adapter()]]
   end
 end

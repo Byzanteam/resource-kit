@@ -74,8 +74,7 @@ defmodule ResourceKit.Action.Skeleton do
       end
 
       defp __execute__(action, references, params, opts) do
-        root = Keyword.fetch!(opts, :root)
-        context = %ExecuteToken.Context{root: root, current: root}
+        context = ExecuteToken.Context.new(opts)
 
         %ExecuteToken{action: action, references: references, params: params, context: context}
         |> Pluggable.run([&__MODULE__.execute(&1, [])])
