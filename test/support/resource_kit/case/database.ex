@@ -31,7 +31,7 @@ defmodule ResourceKit.Case.Database do
   defp setup_sandbox(ctx) do
     alias Ecto.Adapters.SQL.Sandbox
 
-    pid = Sandbox.start_owner!(ResourceKit.Repo, shared: not ctx.async)
+    pid = Sandbox.start_owner!(ResourceKitCLI.Repo, shared: not ctx.async)
     on_exit(fn -> Sandbox.stop_owner(pid) end)
   end
 
@@ -107,6 +107,6 @@ defmodule ResourceKit.Case.Database do
     command
     |> Connection.execute_ddl()
     |> Enum.map(&IO.iodata_to_binary/1)
-    |> ResourceKit.Repo.query()
+    |> ResourceKitCLI.Repo.query()
   end
 end

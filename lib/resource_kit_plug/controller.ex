@@ -6,10 +6,12 @@ defmodule ResourceKitPlug.Controller do
 
   for type <- [:insert, :list] do
     @spec unquote(type)(request :: map(), ctx :: PhxJsonRpc.Router.Context.t()) :: map()
-    def unquote(type)(request, _ctx) do
+    def unquote(type)(request, %PhxJsonRpc.Router.Context{
+          meta_data: %{dynamic_repo: dynamic_repo}
+        }) do
       with {:ok, request} <- cast_request(request),
            {:ok, action} <- fetch_action(request),
-           {:ok, result} <- run(request, unquote(type), action) do
+           {:ok, result} <- run(request, unquote(type), action, dynamic_repo: dynamic_repo) do
         result
       end
     end
@@ -53,8 +55,8 @@ defmodule ResourceKitPlug.Controller do
     end
   end
 
-  defp run(%Request{uri: uri, params: params}, type, action) do
-    case apply(ResourceKit, type, [action, params, [root: uri]]) do
+  defp run(%Request{uri: uri, params: params}, type, action, opts) do
+    case apply(ResourceKit, type, [action, params, Keyword.put(opts, :root, uri)]) do
       {:ok, result} ->
         {:ok, result}
 

@@ -9,24 +9,23 @@ defmodule ResourceKit.Pipeline.Execute.Run do
 
   @behaviour Pluggable
 
-  use TypedStruct
-
-  typedstruct module: Options do
-    field :repo, module(), default: ResourceKit.Repo
-  end
-
   alias ResourceKit.Pipeline.Execute.Token
 
   @impl Pluggable
-  def init(args), do: struct(Options, args)
+  def init(args), do: args
 
   @impl Pluggable
   def call(%Token{halted: true} = token, _opts), do: token
 
-  def call(%Token{} = token, %Options{repo: repo}) do
-    token
-    |> Token.fetch_assign!(:multi)
-    |> repo.transaction()
+  def call(%Token{} = token, _opts) do
+    %Token{context: %Token.Context{dynamic_repo: dynamic_repo}} = token
+
+    dynamic_repo
+    |> ResourceKit.Repo.execute(fn repo ->
+      token
+      |> Token.fetch_assign!(:multi)
+      |> repo.transaction()
+    end)
     |> case do
       {:ok, changes} -> Token.put_assign(token, :changes, changes)
       {:error, _operation, reason, _changes} -> Token.put_error(token, reason)

@@ -17,11 +17,10 @@ defmodule ResourceKit.Action.InsertMovieTest do
 
   setup :setup_tables
   setup :load_jsons
+  setup :setup_options
 
   @tag jsons: [action: "actions/insert_movie.json"]
-  test "works", %{action: action} do
-    root = URI.new!("actions/insert_movie.json")
-
+  test "works", %{action: action, opts: opts} do
     params = %{
       "title" => "Spy x Family Code: White",
       "likes" => 2878,
@@ -39,13 +38,11 @@ defmodule ResourceKit.Action.InsertMovieTest do
               "release_date" => ~D[2024-04-30],
               "created_at" => ~U[2023-12-22 14:23:07.000000Z],
               "tags" => ["Animation", "Comedy"]
-            }} = ResourceKit.insert(action, params, root: root)
+            }} = ResourceKit.insert(action, params, opts)
   end
 
   @tag jsons: [action: "actions/insert_movie.json"]
-  test "failed", %{action: action} do
-    root = URI.new!("actions/insert_movie.json")
-
+  test "failed", %{action: action, opts: opts} do
     params = %{
       "title" => "Spy x Family Code: White",
       "likes" => 2878,
@@ -54,7 +51,13 @@ defmodule ResourceKit.Action.InsertMovieTest do
       "tags" => ["Animation", "Comedy"]
     }
 
-    assert {:error, changeset} = ResourceKit.insert(action, params, root: root)
+    assert {:error, changeset} = ResourceKit.insert(action, params, opts)
     assert match?(%{release_date: ["is invalid"]}, errors_on(changeset))
+  end
+
+  defp setup_options(%{jsons: jsons}) do
+    uri = jsons |> Keyword.fetch!(:action) |> URI.new!()
+
+    [opts: [root: uri, dynamic_repo: ResourceKit.Repo.adapter()]]
   end
 end
