@@ -2,6 +2,8 @@ defmodule ResourceKit.Action.ListDirectorsWithMoviesThroughTest do
   use ResourceKit.Case.Database, async: true
   use ResourceKit.Case.FileLoader, async: true
 
+  @repo ResourceKit.Repo.adapter()
+
   @director_name "directors"
   @director_columns [
     {:add, :id, :uuid, primary_key: true, auto_generate: true},
@@ -22,6 +24,7 @@ defmodule ResourceKit.Action.ListDirectorsWithMoviesThroughTest do
 
   setup :setup_tables
   setup :load_jsons
+  setup :setup_options
 
   @tag tables: [
          {@director_name, @director_columns},
@@ -29,18 +32,17 @@ defmodule ResourceKit.Action.ListDirectorsWithMoviesThroughTest do
          {@director_movie_name, @director_movie_columns}
        ]
   @tag jsons: [action: "actions/list_directors_with_movies_through.json"]
-  test "list directors with movies by has_many_through association", %{action: action} do
+  test "list directors with movies by has_many_through association", %{action: action, opts: opts} do
     setup_dataset([
       {"Osgood Perkins", ["Longlegs"]},
       {"Lee Isaac Chung", ["Twisters", "Minari"]},
       {"M. Night Shyamalan", ["Trap", "The Watchers"]}
     ])
 
-    root = URI.new!("actions/list_directors_with_movies_through.json")
     params = %{"pagination" => %{"offset" => 0, "limit" => 2}}
 
     assert {:ok, %{"data" => data, "pagination" => pagination}} =
-             ResourceKit.list(action, params, root: root)
+             ResourceKit.list(action, params, opts)
 
     assert match?(
              [
@@ -61,6 +63,12 @@ defmodule ResourceKit.Action.ListDirectorsWithMoviesThroughTest do
     end)
   end
 
+  defp setup_options(%{jsons: jsons}) do
+    uri = jsons |> Keyword.fetch!(:action) |> URI.new!()
+
+    [opts: [root: uri, dynamic_repo: ResourceKit.Repo.adapter()]]
+  end
+
   defp insert_director(name) do
     alias JetExt.Ecto.Schemaless.Repo
     alias JetExt.Ecto.Schemaless.Schema
@@ -68,7 +76,7 @@ defmodule ResourceKit.Action.ListDirectorsWithMoviesThroughTest do
     schema = build_schema(@director_name, @director_columns)
     changeset = Schema.changeset(schema, %{name: name})
 
-    Repo.insert(ResourceKit.Repo, schema, changeset)
+    Repo.insert(@repo, schema, changeset)
   end
 
   defp insert_movies(titles) do
@@ -81,7 +89,7 @@ defmodule ResourceKit.Action.ListDirectorsWithMoviesThroughTest do
     |> Enum.map(fn title ->
       changeset = Schema.changeset(schema, %{title: title})
 
-      ResourceKit.Repo
+      @repo
       |> Repo.insert(schema, changeset)
       |> elem(1)
       |> Map.fetch!(:id)
@@ -94,6 +102,6 @@ defmodule ResourceKit.Action.ListDirectorsWithMoviesThroughTest do
 
     schema = build_schema(@director_movie_name, @director_movie_columns)
     entries = Enum.map(movie_ids, &%{director_id: director_id, movie_id: &1})
-    Repo.insert_all(ResourceKit.Repo, schema, entries)
+    Repo.insert_all(@repo, schema, entries)
   end
 end
