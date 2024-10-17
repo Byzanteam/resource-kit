@@ -20,11 +20,30 @@ defmodule ResourceKitPlug.Router do
   defp handle(%Plug.Conn{} = conn, service) do
     import PhxJsonRpcWeb.Views.Helpers
 
-    {:ok, dynamic} = fetch_dynamic(conn)
+    case fetch_dynamic(conn) do
+      {:ok, dynamic} ->
+        conn
+        |> put_resp_header("content-type", "application/json; charset=utf-8")
+        |> send_json(conn.params |> service.handle(%{dynamic: dynamic}) |> render_json())
 
-    conn
-    |> put_resp_header("content-type", "application/json; charset=utf-8")
-    |> send_json(conn.params |> service.handle(%{dynamic: dynamic}) |> render_json())
+      :error ->
+        raise RuntimeError, """
+        Could not get dynamic repo from conn, please set dynamic repo before ResourceKitPlug.Router:
+
+        ```
+        defmodule MyApp.Plug do
+          use Plug.Builder
+
+          plug :put_dynamic
+          plug ResourceKitPlug.Router
+
+          defp put_dynamic(conn, _opts) do
+            ResourceKitPlug.Router.put_dynamic_repo(conn, MyApp.Repo)
+          end
+        end
+        ```
+        """
+    end
   end
 
   defp fetch_dynamic(%Plug.Conn{private: private}) do
