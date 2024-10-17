@@ -26,7 +26,7 @@ defmodule ResourceKit.Pipeline.Execute.BuildParamsTest do
       action: action,
       references: %{},
       params: params,
-      context: Execute.Token.Context.new(root: uri, dynamic: ResourceKit.Repo.adapter())
+      context: Execute.Token.Context.new(root: uri, dynamic_repo: ResourceKit.Repo.adapter())
     }
 
     assert %Execute.Token{halted: false} = token = Execute.BuildParams.call(token, [])
@@ -59,7 +59,7 @@ defmodule ResourceKit.Pipeline.Execute.BuildParamsTest do
       action: action,
       references: %{},
       params: params,
-      context: Execute.Token.Context.new(root: uri, dynamic: ResourceKit.Repo.adapter())
+      context: Execute.Token.Context.new(root: uri, dynamic_repo: ResourceKit.Repo.adapter())
     }
 
     assert %Execute.Token{halted: false} = token = Execute.BuildParams.call(token, [])
@@ -94,7 +94,7 @@ defmodule ResourceKit.Pipeline.Execute.BuildParamsTest do
       action: action,
       references: %{},
       params: params,
-      context: Execute.Token.Context.new(root: uri, dynamic: ResourceKit.Repo.adapter())
+      context: Execute.Token.Context.new(root: uri, dynamic_repo: ResourceKit.Repo.adapter())
     }
 
     assert %Execute.Token{halted: false} = token = Execute.BuildParams.call(token, [])
@@ -184,7 +184,7 @@ defmodule ResourceKit.Pipeline.Execute.BuildParamsTest do
     %{jsons: jsons, action: action} = ctx
 
     root = jsons |> Keyword.fetch!(:action) |> URI.new!()
-    context = Execute.Token.Context.new(root: root, dynamic: ResourceKit.Repo.adapter())
+    context = Execute.Token.Context.new(root: root, dynamic_repo: ResourceKit.Repo.adapter())
 
     %Execute.Token{action: action, references: %{}, params: params, context: context}
   end

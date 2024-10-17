@@ -10,9 +10,10 @@ defmodule ResourceKitPlug.Router do
   plug :match
   plug :dispatch
 
-  @spec put_dynamic(conn :: Plug.Conn.t(), dynamic :: ResourceKit.Repo.repo()) :: Plug.Conn.t()
-  def put_dynamic(%Plug.Conn{} = conn, dynamic) do
-    put_private(conn, @dynamic_private, dynamic)
+  @spec put_dynamic(conn :: Plug.Conn.t(), dynamic_repo :: ResourceKit.Repo.repo()) ::
+          Plug.Conn.t()
+  def put_dynamic(%Plug.Conn{} = conn, dynamic_repo) do
+    put_private(conn, @dynamic_private, dynamic_repo)
   end
 
   post "/rpc/actions", do: handle(conn, ResourceKitPlug.Service)
@@ -21,10 +22,14 @@ defmodule ResourceKitPlug.Router do
     import PhxJsonRpcWeb.Views.Helpers
 
     case fetch_dynamic(conn) do
-      {:ok, dynamic} ->
+      {:ok, dynamic_repo} ->
         conn
         |> put_resp_header("content-type", "application/json; charset=utf-8")
-        |> send_json(conn.params |> service.handle(%{dynamic: dynamic}) |> render_json())
+        |> send_json(
+          conn.params
+          |> service.handle(%{dynamic_repo: dynamic_repo})
+          |> render_json()
+        )
 
       :error ->
         raise RuntimeError, """

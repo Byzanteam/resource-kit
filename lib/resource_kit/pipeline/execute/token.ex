@@ -15,14 +15,16 @@ defmodule ResourceKit.Pipeline.Execute.Token do
     typedstruct do
       field :root, URI.t(), enforce: true
       field :current, URI.t(), enforce: true
-      field :dynamic, atom() | pid(), enforce: true
+      field :dynamic_repo, repo(), enforce: true
     end
+
+    @typep repo() :: atom() | pid()
 
     def new(args) do
       root = Keyword.fetch!(args, :root)
-      dynamic = Keyword.fetch!(args, :dynamic)
+      dynamic_repo = Keyword.fetch!(args, :dynamic_repo)
 
-      struct(__MODULE__, root: root, current: root, dynamic: dynamic)
+      struct(__MODULE__, root: root, current: root, dynamic_repo: dynamic_repo)
     end
   end
 

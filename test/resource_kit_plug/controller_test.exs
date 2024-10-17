@@ -77,7 +77,7 @@ defmodule ResourceKitPlug.ControllerTest do
     alias PhxJsonRpc.Router.Context
     alias ResourceKitPlug.Controller
 
-    context = Context.build(Controller, %{dynamic: ResourceKit.Repo.adapter()})
+    context = Context.build(Controller, %{dynamic_repo: ResourceKit.Repo.adapter()})
 
     apply(Controller, type, [request, context])
   end

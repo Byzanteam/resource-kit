@@ -32,7 +32,7 @@ defmodule ResourceKit.Pipeline.Execute.RunTest do
   end
 
   defp build_token(multi) do
-    context = Token.Context.new(root: URI.new!("uri"), dynamic: ResourceKit.Repo.adapter())
+    context = Token.Context.new(root: URI.new!("uri"), dynamic_repo: ResourceKit.Repo.adapter())
 
     Token.put_assign(
       %Token{action: %{}, references: %{}, params: %{}, context: context},

@@ -18,9 +18,9 @@ defmodule ResourceKit.Pipeline.Execute.Run do
   def call(%Token{halted: true} = token, _opts), do: token
 
   def call(%Token{} = token, _opts) do
-    %Token{context: %Token.Context{dynamic: dynamic}} = token
+    %Token{context: %Token.Context{dynamic_repo: dynamic_repo}} = token
 
-    dynamic
+    dynamic_repo
     |> ResourceKit.Repo.execute(fn repo ->
       token
       |> Token.fetch_assign!(:multi)

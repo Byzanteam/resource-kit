@@ -8,13 +8,13 @@ defmodule ResourceKit.Repo do
   @spec adapter() :: module()
   def adapter, do: @adapter
 
-  @spec execute(dynamic :: repo(), callback :: (Ecto.Repo.t() -> result)) :: result
+  @spec execute(dynamic_repo :: repo(), callback :: (Ecto.Repo.t() -> result)) :: result
         when result: var
-  def execute(dynamic, callback) do
+  def execute(dynamic_repo, callback) do
     default = @adapter.get_dynamic_repo()
 
     try do
-      @adapter.put_dynamic_repo(dynamic)
+      @adapter.put_dynamic_repo(dynamic_repo)
       callback.(@adapter)
     after
       @adapter.put_dynamic_repo(default)

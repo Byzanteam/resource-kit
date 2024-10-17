@@ -112,6 +112,6 @@ defmodule ResourceKit.Action.InsertMovieWithCommentsTest do
   defp setup_options(%{jsons: jsons}) do
     uri = jsons |> Keyword.fetch!(:action) |> URI.new!()
 
-    [opts: [root: uri, dynamic: ResourceKit.Repo.adapter()]]
+    [opts: [root: uri, dynamic_repo: ResourceKit.Repo.adapter()]]
   end
 end
