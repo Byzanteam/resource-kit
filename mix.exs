@@ -53,7 +53,7 @@ defmodule ResourceKit.MixProject do
 
   defp releases do
     [
-      resource_kit: [
+      resource_kit_cli: [
         include_executables_for: [:unix],
         applications: [resource_kit: :permanent]
       ]
