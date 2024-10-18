@@ -19,9 +19,6 @@ jobs:
     name: Build
     runs-on: image-builder
     steps:
-      - name: QEMU
-        uses: docker/setup-qemu-action@v2
-
       - name: Buildx
         uses: Byzanteam/jet-actions/setup-multi-platform-buildx@main
 
