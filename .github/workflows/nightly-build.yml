@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - feature/release
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name }}
