@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  RELEASE: resource-kit
+  RELEASE: resource-kit-cli
 
 jobs:
   build:
