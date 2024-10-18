@@ -24,11 +24,11 @@ COPY lib/ /app/lib/
 COPY priv/ /app/priv/
 
 RUN mix sentry.package_source_code
-RUN mix release resource_kit
+RUN mix release resource_kit_cli
 
 FROM ${BASE_RUNNER}
 
-ENV LANG C.UTF-8
+ENV LANG=C.UTF-8
 
 ENV MIX_ENV=prod
 
@@ -41,10 +41,10 @@ WORKDIR /app
 ARG APP_VERSION
 ARG APP_REVISION
 
-ENV APP_NAME=resource_kit
+ENV APP_NAME=resource_kit_cli
 ENV APP_VERSION=${APP_VERSION}
 ENV APP_REVISION=${APP_REVISION}
 
 COPY --from=builder /app/_build/${MIX_ENV}/rel/${APP_NAME} .
 
-CMD /app/bin/${APP_NAME} start
+CMD ["/app/bin/${APP_NAME}", "start"]
