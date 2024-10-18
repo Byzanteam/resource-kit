@@ -10,6 +10,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name }}
   cancel-in-progress: true
 
+env:
+  RELEASE: resource-kit
+
 jobs:
   build:
     timeout-minutes: 30
@@ -33,7 +36,7 @@ jobs:
         id: metadata
         uses: docker/metadata-action@v4
         with:
-          images: ghcr.io/byzanteam/resource-kit
+          images: ghcr.io/byzanteam/${{ env.RELEASE }}
           tags: |
             type=raw,value=nightly,enable={{is_default_branch}}
             type=sha
@@ -41,8 +44,8 @@ jobs:
       - name: Build and Push
         uses: docker/build-push-action@v4
         with:
-          cache-from: type=registry,ref=ghcr.io/byzanteam/resource-kit:buildcache
-          cache-to: type=registry,ref=ghcr.io/byzanteam/resource-kit:buildcache,mode=max
+          cache-from: type=registry,ref=ghcr.io/byzanteam/${{ env.RELEASE }}:buildcache
+          cache-to: type=registry,ref=ghcr.io/byzanteam/${{ env.RELEASE }}:buildcache,mode=max
           platforms: linux/amd64,linux/arm64
           push: true
           labels: ${{ steps.metadata.outputs.labels }}
