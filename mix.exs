@@ -10,6 +10,7 @@ defmodule ResourceKit.MixProject do
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
+      releases: releases(),
       dialyzer: [plt_file: {:no_warn, "priv/plts/dialyzer.plt"}]
     ]
   end
@@ -34,6 +35,7 @@ defmodule ResourceKit.MixProject do
       {:credo, "~> 1.7", only: [:dev], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
       {:ecto_sql, "~> 3.12"},
+      {:finch, "~> 0.19.0"},
       {:jason, "~> 1.4"},
       {:jet_credo, github: "Byzanteam/jet_credo", only: [:dev], runtime: false},
       {:jet_ext, "~> 0.3.0"},
@@ -43,8 +45,18 @@ defmodule ResourceKit.MixProject do
       {:pluggable, "~> 1.1"},
       {:polymorphic_embed, "~> 5.0"},
       {:postgrex, ">= 0.0.0"},
+      {:sentry, "~> 10.7"},
       {:snapshy, "~> 0.4.0", only: [:test], runtime: false},
       {:typed_struct, "~> 0.3.0"}
+    ]
+  end
+
+  defp releases do
+    [
+      resource_kit: [
+        include_executables_for: [:unix],
+        applications: [resource_kit: :permanent]
+      ]
     ]
   end
 
