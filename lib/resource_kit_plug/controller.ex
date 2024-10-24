@@ -6,11 +6,10 @@ defmodule ResourceKitPlug.Controller do
 
   for type <- [:insert, :list] do
     @spec unquote(type)(request :: map(), ctx :: PhxJsonRpc.Router.Context.t()) :: map()
-    def unquote(type)(request, %PhxJsonRpc.Router.Context{
-          meta_data: %{dynamic_repo: dynamic_repo}
-        }) do
+    def unquote(type)(request, _ctx) do
       with {:ok, request} <- cast_request(request),
            {:ok, action} <- fetch_action(request),
+           {:ok, dynamic_repo} <- fetch_dynamic_repo(request),
            {:ok, result} <- run(request, unquote(type), action, dynamic_repo: dynamic_repo) do
         result
       end
@@ -51,6 +50,18 @@ defmodule ResourceKitPlug.Controller do
       {:error, {message, options}} ->
         raise PhxJsonRpc.Error.InvalidParams,
           message: "can't fetch action due to: '#{message}'",
+          data: Map.new(options)
+    end
+  end
+
+  defp fetch_dynamic_repo(%Request{uri: uri}) do
+    case ResourceKit.Deref.dynamic_repo(%Ref{uri: uri}) do
+      {:ok, dynamic_repo} ->
+        {:ok, dynamic_repo}
+
+      {:error, {message, options}} ->
+        raise PhxJsonRpc.Error.InvalidParams,
+          message: "can't fetch dynamic repo due to: '#{message}'",
           data: Map.new(options)
     end
   end

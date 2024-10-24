@@ -13,6 +13,11 @@ defmodule ResourceKit.Deref.Local do
   alias ResourceKit.Schema.Ref
 
   @impl ResourceKit.Deref
+  def dynamic_repo(_ref) do
+    {:ok, ResourceKit.Repo.adapter()}
+  end
+
+  @impl ResourceKit.Deref
   def fetch(%Ref{uri: %URI{} = uri}, %Context{opts: opts}) do
     directory = Keyword.get_lazy(opts, :directory, &File.cwd!/0)
     file = uri.path |> Path.relative() |> Path.expand(directory)

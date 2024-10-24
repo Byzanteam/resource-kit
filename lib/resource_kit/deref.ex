@@ -16,6 +16,9 @@ defmodule ResourceKit.Deref do
   @adapter if is_tuple(@conf), do: elem(@conf, 0), else: @conf
   @opts if is_tuple(@conf), do: elem(@conf, 1), else: []
 
+  @callback dynamic_repo(ref :: Ref.t()) ::
+              {:ok, ResourceKit.Repo.dynamic_repo()} | {:error, Types.error()}
+
   @callback resolve(ref :: Ref.t(), ctx :: Context.t()) ::
               {:ok, Ref.t()} | {:error, Types.error()}
 
@@ -52,6 +55,12 @@ defmodule ResourceKit.Deref do
 
   @spec adapter() :: module()
   def adapter, do: @adapter
+
+  @spec dynamic_repo(ref :: Ref.t()) ::
+          {:ok, ResourceKit.Repo.dynamic_repo()} | {:error, Types.error()}
+  def dynamic_repo(ref) do
+    adapter().dynamic_repo(ref)
+  end
 
   @spec resolve(ref :: Ref.t(), ctx :: Context.t()) :: {:ok, Ref.t()} | {:error, Types.error()}
   def resolve(ref, ctx) do
