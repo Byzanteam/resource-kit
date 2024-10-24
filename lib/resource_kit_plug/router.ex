@@ -5,9 +5,9 @@ defmodule ResourceKitPlug.Router do
 
   @dynamic_private :resource_kit_plug_dynamic_repo
 
-  @spec put_dynamic(conn :: Plug.Conn.t(), dynamic_repo :: ResourceKit.Repo.dynamic_repo()) ::
+  @spec put_dynamic_repo(conn :: Plug.Conn.t(), dynamic_repo :: ResourceKit.Repo.dynamic_repo()) ::
           Plug.Conn.t()
-  def put_dynamic(%Plug.Conn{} = conn, dynamic_repo) do
+  def put_dynamic_repo(%Plug.Conn{} = conn, dynamic_repo) do
     put_private(conn, @dynamic_private, dynamic_repo)
   end
 
@@ -33,10 +33,10 @@ defmodule ResourceKitPlug.Router do
         defmodule MyApp.Plug do
           use Plug.Builder
 
-          plug :put_dynamic
+          plug :put_dynamic_repo
           post "/rpc", to: ResourceKitPlug.Router
 
-          defp put_dynamic(conn, _opts) do
+          defp put_dynamic_repo(conn, _opts) do
             ResourceKitPlug.Router.put_dynamic_repo(conn, MyApp.Repo)
           end
         end
