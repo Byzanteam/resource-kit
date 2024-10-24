@@ -4,6 +4,8 @@ defmodule ResourceKitPlug.Controller do
   alias ResourceKit.Schema.Ref
   alias ResourceKit.Schema.Request
 
+  @dialyzer {:no_match, fetch_dynamic_repo: 1}
+
   for type <- [:insert, :list] do
     @spec unquote(type)(request :: map(), ctx :: PhxJsonRpc.Router.Context.t()) :: map()
     def unquote(type)(request, _ctx) do
