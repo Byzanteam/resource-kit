@@ -12,9 +12,7 @@ defmodule ResourceKit.Deref do
   alias ResourceKit.Deref.Context
   alias ResourceKit.Schema.Ref
 
-  @conf Application.compile_env!(:resource_kit, [__MODULE__, :adapter])
-  @adapter if is_tuple(@conf), do: elem(@conf, 0), else: @conf
-  @opts if is_tuple(@conf), do: elem(@conf, 1), else: []
+  @adapter Application.compile_env!(:resource_kit, [__MODULE__, :adapter])
 
   @callback dynamic_repo(ref :: Ref.t()) ::
               {:ok, ResourceKit.Repo.dynamic_repo()} | {:error, Types.error()}
@@ -22,8 +20,7 @@ defmodule ResourceKit.Deref do
   @callback resolve(ref :: Ref.t(), ctx :: Context.t()) ::
               {:ok, Ref.t()} | {:error, Types.error()}
 
-  @callback fetch(ref :: Ref.t(), ctx :: Context.t()) ::
-              {:ok, Types.json_value()} | {:error, Types.error()}
+  @callback fetch(ref :: Ref.t()) :: {:ok, Types.json_value()} | {:error, Types.error()}
 
   defmacro __using__(_args) do
     quote location: :keep do
@@ -58,22 +55,11 @@ defmodule ResourceKit.Deref do
 
   @spec dynamic_repo(ref :: Ref.t()) ::
           {:ok, ResourceKit.Repo.dynamic_repo()} | {:error, Types.error()}
-  def dynamic_repo(ref) do
-    adapter().dynamic_repo(ref)
-  end
+  def dynamic_repo(ref), do: adapter().dynamic_repo(ref)
+
+  @spec fetch(ref :: Ref.t()) :: {:ok, Types.json_value()} | {:error, Types.error()}
+  def fetch(ref), do: adapter().fetch(ref)
 
   @spec resolve(ref :: Ref.t(), ctx :: Context.t()) :: {:ok, Ref.t()} | {:error, Types.error()}
-  def resolve(ref, ctx) do
-    adapter().resolve(ref, put_options(ctx))
-  end
-
-  @spec fetch(ref :: Ref.t(), ctx :: Context.t()) ::
-          {:ok, Types.json_value()} | {:error, Types.error()}
-  def fetch(ref, ctx) do
-    adapter().fetch(ref, put_options(ctx))
-  end
-
-  defp put_options(ctx) do
-    %{ctx | opts: @opts}
-  end
+  def resolve(ref, ctx), do: adapter().resolve(ref, ctx)
 end

@@ -15,7 +15,6 @@ defmodule ResourceKit.Pipeline.Compile.Deref do
 
   import ResourceKit.Guards
 
-  alias ResourceKit.Deref.Context, as: DerefContext
   alias ResourceKit.Pipeline.Compile.Token
   alias ResourceKit.Schema.Ref
 
@@ -25,9 +24,9 @@ defmodule ResourceKit.Pipeline.Compile.Deref do
   @impl Pluggable
   def call(%Token{halted: true} = token, _opts), do: token
 
-  def call(%Token{action: action, context: ctx} = token, _opts) do
-    with {:ok, action} <- deref_schema(action, ctx),
-         {:ok, action} <- deref_returning_schema(action, ctx) do
+  def call(%Token{action: action} = token, _opts) do
+    with {:ok, action} <- deref_schema(action),
+         {:ok, action} <- deref_returning_schema(action) do
       Token.put_assign(token, :action, action)
     else
       {:error, reason} ->
@@ -35,23 +34,23 @@ defmodule ResourceKit.Pipeline.Compile.Deref do
     end
   end
 
-  defp deref_schema(%{"schema" => ref} = action, ctx) when is_ref(ref) do
+  defp deref_schema(%{"schema" => ref} = action) when is_ref(ref) do
     with {:ok, ref} <- cast_ref(ref),
-         {:ok, schema} <- ResourceKit.Deref.fetch(ref, %DerefContext{current: ctx.current}) do
+         {:ok, schema} <- ResourceKit.Deref.fetch(ref) do
       {:ok, Map.put(action, "schema", schema)}
     end
   end
 
-  defp deref_schema(action, _ctx), do: {:ok, action}
+  defp deref_schema(action), do: {:ok, action}
 
-  defp deref_returning_schema(%{"returning_schema" => ref} = action, ctx) when is_ref(ref) do
+  defp deref_returning_schema(%{"returning_schema" => ref} = action) when is_ref(ref) do
     with {:ok, ref} <- cast_ref(ref),
-         {:ok, returning} <- ResourceKit.Deref.fetch(ref, %DerefContext{current: ctx.current}) do
+         {:ok, returning} <- ResourceKit.Deref.fetch(ref) do
       {:ok, Map.put(action, "returning_schema", returning)}
     end
   end
 
-  defp deref_returning_schema(action, _ctx), do: {:ok, action}
+  defp deref_returning_schema(action), do: {:ok, action}
 
   defp cast_ref(ref) do
     ref |> Ref.changeset() |> Ecto.Changeset.apply_action(:insert)

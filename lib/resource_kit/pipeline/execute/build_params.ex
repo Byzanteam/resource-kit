@@ -13,7 +13,6 @@ defmodule ResourceKit.Pipeline.Execute.BuildParams do
 
   @behaviour Pluggable
 
-  alias ResourceKit.Deref.Context, as: DerefContext
   alias ResourceKit.JSONPointer.Absolute
   alias ResourceKit.JSONPointer.Relative
   alias ResourceKit.Pipeline.Execute.Token
@@ -86,7 +85,7 @@ defmodule ResourceKit.Pipeline.Execute.BuildParams do
          %HasColumn{association_schema: schema} = definition,
          scope
        ) do
-    with {:ok, definition} <- fetch_association_definition(definition, scope.context, assoc.name),
+    with {:ok, definition} <- fetch_association_definition(definition, assoc.name),
          {:ok, _value, location} <- __MODULE__.Scope.resolve(pointer, scope),
          scope = %{scope | current_value: scope.root_value, location: location},
          scope = update_context(schema, scope),
@@ -103,7 +102,7 @@ defmodule ResourceKit.Pipeline.Execute.BuildParams do
          %HasColumn{association_schema: schema} = definition,
          scope
        ) do
-    with {:ok, definition} <- fetch_association_definition(definition, scope.context, assoc.name),
+    with {:ok, definition} <- fetch_association_definition(definition, assoc.name),
          {:ok, _value, location} <- __MODULE__.Scope.resolve(pointer, scope),
          scope = %{scope | location: location},
          scope = update_context(schema, scope),
@@ -124,7 +123,7 @@ defmodule ResourceKit.Pipeline.Execute.BuildParams do
          %HasColumn{association_schema: schema} = definition,
          scope
        ) do
-    with {:ok, definition} <- fetch_association_definition(definition, scope.context, assoc.name),
+    with {:ok, definition} <- fetch_association_definition(definition, assoc.name),
          scope = %{scope | current_value: value, location: []},
          scope = update_context(schema, scope),
          {:ok, value} <- handle_changeset(assoc.changeset, definition, scope) do
@@ -141,11 +140,8 @@ defmodule ResourceKit.Pipeline.Execute.BuildParams do
     end
   end
 
-  defp fetch_association_definition(%HasColumn{association_schema: schema}, context, name) do
-    with {:ok, schema} <-
-           ResourceKit.Utils.resolve_association_schema(schema, %DerefContext{
-             current: context.current
-           }) do
+  defp fetch_association_definition(%HasColumn{association_schema: schema}, name) do
+    with {:ok, schema} <- ResourceKit.Utils.resolve_association_schema(schema) do
       case Enum.find(schema.columns, &(&1.name === name)) do
         %HasColumn{} = definition -> {:ok, definition}
         %LiteralColumn{} -> {:error, {"is not an association definition", validation: :custom}}
