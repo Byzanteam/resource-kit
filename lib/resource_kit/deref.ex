@@ -4,7 +4,7 @@ defmodule ResourceKit.Deref do
 
   ## Options
 
-    * `adapter` - A module that implemented the deref behaviour. Or `{adapter, opts}` if the adapter has options.
+    * `adapter` - A module that implemented the deref behaviour.
   """
 
   alias ResourceKit.Types
