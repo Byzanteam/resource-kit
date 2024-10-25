@@ -10,7 +10,6 @@ defmodule ResourceKit.Pipeline.Compile.PreloadReference do
 
   @behaviour Pluggable
 
-  alias ResourceKit.Deref.Context, as: DerefContext
   alias ResourceKit.Pipeline.Compile.Token
   alias ResourceKit.Schema.Column
   alias ResourceKit.Schema.Ref
@@ -58,21 +57,21 @@ defmodule ResourceKit.Pipeline.Compile.PreloadReference do
   defp preload_column(column, context, references)
        when is_struct(column, Column.Belongs) or is_struct(column, Column.Has) do
     with {:ok, schema, references} <-
-           resolve_association_schema(column.association_schema, context, references),
+           resolve_association_schema(column.association_schema, references),
          {:ok, _schema, references} <-
            preload_schema(schema, update_context(column.association_schema, context), references) do
       {:ok, column, references}
     end
   end
 
-  defp resolve_association_schema(%Ref{} = ref, context, references) do
-    case resolve(ref, context, references) do
+  defp resolve_association_schema(%Ref{} = ref, references) do
+    case resolve(ref, references) do
       {:ok, schema} -> {:ok, schema, Map.put_new(references, ref, schema)}
       {:error, reason} -> {:error, reason}
     end
   end
 
-  defp resolve_association_schema(schema, _context, references), do: {:ok, schema, references}
+  defp resolve_association_schema(schema, references), do: {:ok, schema, references}
 
   defp update_context(%Ref{uri: uri}, context) do
     %{context | current: uri}
@@ -80,9 +79,9 @@ defmodule ResourceKit.Pipeline.Compile.PreloadReference do
 
   defp update_context(_schema, context), do: context
 
-  defp resolve(ref, context, references) do
+  defp resolve(ref, references) do
     with :error <- Map.fetch(references, ref) do
-      ResourceKit.Utils.resolve_association_schema(ref, %DerefContext{current: context.current})
+      ResourceKit.Utils.resolve_association_schema(ref)
     end
   end
 end

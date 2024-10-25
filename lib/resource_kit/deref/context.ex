@@ -7,6 +7,5 @@ defmodule ResourceKit.Deref.Context do
 
   typedstruct do
     field :current, Ref.t(), enforce: true
-    field :opts, keyword(), default: []
   end
 end

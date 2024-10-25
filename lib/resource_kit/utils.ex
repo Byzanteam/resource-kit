@@ -5,7 +5,6 @@ defmodule ResourceKit.Utils do
 
   alias ResourceKit.Types
 
-  alias ResourceKit.Deref.Context, as: DerefContext
   alias ResourceKit.Schema.Column
   alias ResourceKit.Schema.Ref
   alias ResourceKit.Schema.Schema
@@ -102,17 +101,17 @@ defmodule ResourceKit.Utils do
     end)
   end
 
-  @spec resolve_association_schema(ref_or_schema :: Ref.t() | Schema.t(), ctx :: DerefContext.t()) ::
+  @spec resolve_association_schema(ref_or_schema :: Ref.t() | Schema.t()) ::
           {:ok, Schema.t()} | {:error, Ecto.Changeset.t() | Types.error()}
-  def resolve_association_schema(%Ref{} = ref, ctx) do
-    with {:ok, params} <- ResourceKit.Deref.fetch(ref, ctx) do
+  def resolve_association_schema(%Ref{} = ref) do
+    with {:ok, params} <- ResourceKit.Deref.fetch(ref) do
       params
       |> Schema.changeset()
       |> Ecto.Changeset.apply_action(:insert)
     end
   end
 
-  def resolve_association_schema(%Schema{} = schema, _ctx), do: {:ok, schema}
+  def resolve_association_schema(%Schema{} = schema), do: {:ok, schema}
 
   @spec __root__() :: binary()
   def __root__, do: "root"
